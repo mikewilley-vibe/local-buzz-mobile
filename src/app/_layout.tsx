@@ -1,7 +1,7 @@
 import { DarkTheme, DefaultTheme, Link, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
+import { StyleSheet, useColorScheme, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { runDevConnectionCheck } from '@/lib/connection-check';
@@ -22,18 +22,33 @@ export default function RootLayout() {
           options={{
             title: 'Local Buzz',
             headerRight: () => (
-              <Link href="/map" asChild>
-                <ThemedText type="linkPrimary" accessibilityRole="button">
-                  Map
-                </ThemedText>
-              </Link>
+              <View style={styles.headerActions}>
+                <Link href="/submit" asChild>
+                  <ThemedText type="linkPrimary" accessibilityRole="button">
+                    Add
+                  </ThemedText>
+                </Link>
+                <Link href="/map" asChild>
+                  <ThemedText type="linkPrimary" accessibilityRole="button">
+                    Map
+                  </ThemedText>
+                </Link>
+              </View>
             ),
           }}
         />
         <Stack.Screen name="listing/[id]" options={{ title: 'Listing' }} />
         <Stack.Screen name="map" options={{ title: 'Map' }} />
+        <Stack.Screen name="submit" options={{ title: 'Submit a listing' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  headerActions: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+});

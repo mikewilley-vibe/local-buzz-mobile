@@ -27,6 +27,36 @@ async function readUserId(): Promise<string | null> {
   return hasUsableSession(session) ? session.user.id : null;
 }
 
+/**
+ * Returns the current user id only if the stored session is still valid on the
+ * server. A persisted session can outlive its user (e.g. the account was
+ * deleted), and PostgREST will still trust the signed JWT — leading to
+ * foreign-key failures on writes scoped to `auth.uid()`. Validating with
+ * `getUser()` (a server round-trip) lets the app self-heal by discarding a
+ * stale session so a fresh anonymous user can be created.
+ */
+async function readValidUserId(): Promise<string | null> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!hasUsableSession(session)) return null;
+
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    if (__DEV__) {
+      console.warn('[auth] stored session is invalid, signing out:', error?.message ?? 'no user');
+    }
+    await supabase.auth.signOut();
+    return null;
+  }
+
+  return user.id;
+}
+
 async function signInAnonymouslyOnce(): Promise<string | null> {
   const { data, error } = await supabase.auth.signInAnonymously();
   if (error || !hasUsableSession(data.session)) {
@@ -44,7 +74,7 @@ async function signInAnonymouslyOnce(): Promise<string | null> {
  * anonymous sign-ins are disabled on the project).
  */
 export async function ensureAnonymousUser(): Promise<string | null> {
-  const existing = await readUserId();
+  const existing = await readValidUserId();
   if (existing) return existing;
 
   if (!anonymousSignIn) {
