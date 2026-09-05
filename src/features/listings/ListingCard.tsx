@@ -4,13 +4,19 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
-import { formatListingType, formatLocation, formatSchedule } from '@/features/listings/format';
+import {
+  formatFreshness,
+  formatListingType,
+  formatLocation,
+  formatSchedule,
+} from '@/features/listings/format';
 import type { PublicListing } from '@/features/listings/useListings';
 
 export function ListingCard({ listing }: { listing: PublicListing }) {
   const router = useRouter();
   const schedule = formatSchedule(listing);
   const location = formatLocation(listing);
+  const freshness = formatFreshness(listing);
 
   return (
     <Pressable
@@ -52,6 +58,12 @@ export function ListingCard({ listing }: { listing: PublicListing }) {
             {listing.description}
           </ThemedText>
         )}
+
+        {freshness ? (
+          <ThemedText type="small" style={styles.freshness}>
+            {freshness}
+          </ThemedText>
+        ) : null}
       </ThemedView>
     </Pressable>
   );
@@ -84,5 +96,9 @@ const styles = StyleSheet.create({
   },
   description: {
     marginTop: Spacing.two,
+  },
+  freshness: {
+    marginTop: Spacing.two,
+    color: '#3FB27F',
   },
 });

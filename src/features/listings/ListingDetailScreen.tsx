@@ -1,17 +1,36 @@
 import { Stack } from 'expo-router';
-import type { ReactNode } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { type ReactNode, useState } from 'react';
+import {
+  ActivityIndicator,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { ListingActions } from '@/features/listings/ListingActions';
-import { formatListingType, formatLocation, formatSchedule } from '@/features/listings/format';
+import {
+  formatFreshness,
+  formatListingType,
+  formatLocation,
+  formatSchedule,
+} from '@/features/listings/format';
 import { useListing } from '@/features/listings/useListings';
 
 export function ListingDetailScreen({ id }: { id: string }) {
   const { state, reload } = useListing(id);
+  const [refreshing, setRefreshing] = useState(false);
+
+  async function onRefresh() {
+    setRefreshing(true);
+    await reload();
+    setRefreshing(false);
+  }
 
   if (state.status === 'loading') {
     return (
@@ -64,12 +83,16 @@ export function ListingDetailScreen({ id }: { id: string }) {
   const listing = state.listing;
   const schedule = formatSchedule(listing);
   const location = formatLocation(listing);
+  const freshness = formatFreshness(listing);
 
   return (
     <ThemedView style={styles.flex}>
       <Stack.Screen options={{ title: listing.place_name }} />
       <SafeAreaView edges={['left', 'right', 'bottom']} style={styles.flex}>
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} />}
+        >
           <View style={styles.header}>
             <ThemedText type="smallBold" style={styles.badge}>
               {formatListingType(listing.listing_type)}
@@ -87,6 +110,23 @@ export function ListingDetailScreen({ id }: { id: string }) {
                 {schedule}
               </ThemedText>
             ) : null}
+            <View style={styles.metaRow}>
+              {freshness ? (
+                <ThemedText type="small" style={styles.freshBadge}>
+                  {freshness}
+                </ThemedText>
+              ) : (
+                <ThemedText type="small" themeColor="textSecondary">
+                  Not verified yet
+                </ThemedText>
+              )}
+              {listing.confirmation_count > 0 ? (
+                <ThemedText type="small" themeColor="textSecondary">
+                  {listing.confirmation_count} confirmation
+                  {listing.confirmation_count === 1 ? '' : 's'}
+                </ThemedText>
+              ) : null}
+            </View>
           </View>
 
           {listing.description.length > 0 ? (
@@ -129,6 +169,16 @@ const styles = StyleSheet.create({
   },
   schedule: {
     marginTop: Spacing.one,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: Spacing.three,
+    marginTop: Spacing.one,
+  },
+  freshBadge: {
+    color: '#3FB27F',
   },
   centered: {
     alignItems: 'center',

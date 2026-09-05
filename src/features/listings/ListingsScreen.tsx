@@ -1,3 +1,4 @@
+import { Link } from 'expo-router';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, View } from 'react-native';
@@ -60,18 +61,23 @@ export function ListingsScreen() {
           No listings yet
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary" style={styles.centerText}>
-          Approved happy hours and specials will appear here.
+          Be the first to add a happy hour, trivia night, or food special near you.
         </ThemedText>
+        <Link href="/submit" asChild>
+          <Pressable accessibilityRole="button" style={styles.retryButton}>
+            <ThemedText type="smallBold" style={styles.retryLabel}>
+              Submit a listing
+            </ThemedText>
+          </Pressable>
+        </Link>
         <Pressable
           accessibilityRole="button"
           onPress={() => {
             void reload();
           }}
-          style={styles.retryButton}
+          style={styles.textButton}
         >
-          <ThemedText type="smallBold" style={styles.retryLabel}>
-            Refresh
-          </ThemedText>
+          <ThemedText type="smallBold">Refresh</ThemedText>
         </Pressable>
       </CenteredMessage>
     );
@@ -169,5 +175,10 @@ const styles = StyleSheet.create({
   },
   retryLabel: {
     color: '#ffffff',
+  },
+  textButton: {
+    minHeight: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
