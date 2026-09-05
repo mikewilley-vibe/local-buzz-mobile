@@ -68,7 +68,24 @@ npm run lint         # expo lint
 npx expo-doctor      # environment health
 ```
 
+## Dev data (seeding)
+
+The `local-buzz-dev` project starts empty, so the app shows the empty state
+until listings exist. To populate a few approved listings for testing:
+
+- Run `scripts/seed-dev.sql` against **local-buzz-dev** (Supabase SQL editor, or
+  `psql "$LOCAL_BUZZ_DEV_DB_URL" -f scripts/seed-dev.sql`). It upserts by id, so
+  it's safe to re-run.
+- Remove them again with `scripts/unseed-dev.sql`.
+
+These scripts are **dev-only** and must never be run against production
+(`vghnfdukyosvvoqrxmok`). They write `status = 'approved'` + staff-sourced rows,
+so they require a privileged (service-role) connection.
+
 ## Roadmap
 
-This is milestone 1 (read-only listings). Authentication, submissions, maps, and
-admin features are intentionally not included yet.
+- **Milestone 1** — read-only listings ✅
+- **Milestone 2** — listing detail + native actions (confirm, report, directions) ✅
+
+Authentication UI, submissions, maps, and admin features are intentionally not
+included yet.
