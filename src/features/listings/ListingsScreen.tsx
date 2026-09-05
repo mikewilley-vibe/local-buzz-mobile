@@ -1,15 +1,19 @@
 import type { ReactNode } from 'react';
-import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { ListingCard } from '@/features/listings/ListingCard';
+import { ListingFilters } from '@/features/listings/ListingFilters';
+import { EMPTY_FILTERS, filterListings } from '@/features/listings/filters';
 import { useListings } from '@/features/listings/useListings';
 
 export function ListingsScreen() {
   const { state, reload } = useListings();
+  const [filters, setFilters] = useState(EMPTY_FILTERS);
 
   // Loading
   if (state.status === 'loading') {
@@ -73,15 +77,44 @@ export function ListingsScreen() {
     );
   }
 
-  // Success — with data
+  // Success — with data (filters applied)
+  const filtered = filterListings(state.listings, filters);
+
   return (
     <ThemedView style={styles.flex}>
       <SafeAreaView edges={['left', 'right', 'bottom']} style={styles.flex}>
         <FlatList
-          data={state.listings}
+          data={filtered}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <ListingCard listing={item} />}
           contentContainerStyle={styles.listContent}
+          keyboardShouldPersistTaps="handled"
+          ListHeaderComponent={
+            <ListingFilters
+              listings={state.listings}
+              filters={filters}
+              onChange={setFilters}
+            />
+          }
+          ListEmptyComponent={
+            <View style={styles.noResults}>
+              <ThemedText type="subtitle" style={styles.centerText}>
+                No matches
+              </ThemedText>
+              <ThemedText type="small" themeColor="textSecondary" style={styles.centerText}>
+                Try a different search, type, or city.
+              </ThemedText>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setFilters(EMPTY_FILTERS)}
+                style={styles.retryButton}
+              >
+                <ThemedText type="smallBold" style={styles.retryLabel}>
+                  Clear filters
+                </ThemedText>
+              </Pressable>
+            </View>
+          }
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -120,6 +153,12 @@ const styles = StyleSheet.create({
   listContent: {
     padding: Spacing.three,
     gap: Spacing.three,
+  },
+  noResults: {
+    alignItems: 'center',
+    gap: Spacing.two,
+    paddingVertical: Spacing.six,
+    paddingHorizontal: Spacing.four,
   },
   retryButton: {
     marginTop: Spacing.three,
