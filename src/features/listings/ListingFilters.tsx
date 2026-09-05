@@ -1,4 +1,5 @@
-import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Link } from 'expo-router';
+import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
@@ -58,15 +59,28 @@ export function ListingFilters({
 
   return (
     <View style={styles.container}>
-      <TextInput
-        value={filters.query}
-        onChangeText={(query) => onChange({ ...filters, query })}
-        placeholder="Search happy hours, trivia, venues…"
-        placeholderTextColor="#8A8F98"
-        autoCorrect={false}
-        returnKeyType="search"
-        style={[styles.search, { borderColor: border, color: theme.text }]}
-      />
+      <View style={styles.searchRow}>
+        <TextInput
+          value={filters.query}
+          onChangeText={(query) => onChange({ ...filters, query })}
+          placeholder="Search happy hours, trivia, venues…"
+          placeholderTextColor="#8A8F98"
+          autoCorrect={false}
+          returnKeyType="search"
+          style={[styles.search, { borderColor: border, color: theme.text }]}
+        />
+        <Link href="/map" asChild>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="View listings on a map"
+            style={styles.mapButton}
+          >
+            <ThemedText type="smallBold" style={styles.mapLabel}>
+              Map
+            </ThemedText>
+          </Pressable>
+        </Link>
+      </View>
 
       {types.length > 0 ? (
         <ScrollView
@@ -124,11 +138,29 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
     paddingBottom: Spacing.one,
   },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
   search: {
+    flex: 1,
     minHeight: 44,
     borderWidth: StyleSheet.hairlineWidth * 2,
     borderRadius: Spacing.two,
     paddingHorizontal: Spacing.three,
+  },
+  mapButton: {
+    minHeight: 44,
+    minWidth: 64,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.three,
+    borderRadius: Spacing.two,
+    backgroundColor: PRIMARY,
+  },
+  mapLabel: {
+    color: '#ffffff',
   },
   row: {
     gap: Spacing.two,
