@@ -21,6 +21,13 @@ export default function RootLayout() {
           name="index"
           options={{
             title: 'Local Buzz',
+            headerLeft: () => (
+              <Link href="/account" asChild>
+                <ThemedText type="linkPrimary" accessibilityRole="button">
+                  Account
+                </ThemedText>
+              </Link>
+            ),
             headerRight: () => (
               <View style={styles.headerActions}>
                 <Link href="/submit" asChild>
@@ -40,6 +47,7 @@ export default function RootLayout() {
         <Stack.Screen name="listing/[id]" options={{ title: 'Listing' }} />
         <Stack.Screen name="map" options={{ title: 'Map' }} />
         <Stack.Screen name="submit" options={{ title: 'Submit a listing' }} />
+        <Stack.Screen name="account" options={{ title: 'Account' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
