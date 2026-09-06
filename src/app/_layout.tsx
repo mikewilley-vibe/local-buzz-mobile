@@ -1,4 +1,5 @@
 import { DarkTheme, DefaultTheme, Link, Stack, ThemeProvider } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { Pressable, useColorScheme } from 'react-native';
@@ -6,11 +7,13 @@ import { Pressable, useColorScheme } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { runDevConnectionCheck } from '@/lib/connection-check';
 
+void SplashScreen.preventAutoHideAsync();
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   useEffect(() => {
-    // Development-only Supabase connectivity check (safe no-op in production).
+    void SplashScreen.hideAsync();
     void runDevConnectionCheck();
   }, []);
 
@@ -39,6 +42,7 @@ export default function RootLayout() {
         />
         <Stack.Screen name="listing/[id]" options={{ title: 'Listing' }} />
         <Stack.Screen name="map" options={{ title: 'Map' }} />
+        <Stack.Screen name="week" options={{ title: 'This week' }} />
         <Stack.Screen name="submit" options={{ title: 'Submit a listing' }} />
         <Stack.Screen name="account" options={{ title: 'Account' }} />
       </Stack>

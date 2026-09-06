@@ -29,10 +29,15 @@ export function formatTime(value: string | null): string | null {
   return `${hour12}:${minutes} ${suffix}`;
 }
 
-export function formatSchedule(listing: PublicListing): string {
+export function formatTimeRange(listing: PublicListing): string {
   const start = formatTime(listing.start_time);
   const end = formatTime(listing.end_time);
-  const time = start && end ? `${start} – ${end}` : (start ?? '');
+  if (start && end) return `${start} – ${end}`;
+  return start ?? '';
+}
+
+export function formatSchedule(listing: PublicListing): string {
+  const time = formatTimeRange(listing);
   const days = formatDays(listing.days);
   return [days, time].filter(Boolean).join('  •  ');
 }

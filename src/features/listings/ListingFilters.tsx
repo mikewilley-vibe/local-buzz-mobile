@@ -69,6 +69,15 @@ export function ListingFilters({
           returnKeyType="search"
           style={[styles.search, { borderColor: border, color: theme.text }]}
         />
+        <Link href="/week" asChild>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="View specials for the week ahead"
+            style={StyleSheet.flatten([styles.sideButton, { borderColor: border }])}
+          >
+            <ThemedText type="smallBold">Week</ThemedText>
+          </Pressable>
+        </Link>
         <Link href="/map" asChild>
           <Pressable
             accessibilityRole="button"
@@ -158,6 +167,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.three,
     borderRadius: Spacing.two,
     backgroundColor: PRIMARY,
+  },
+  sideButton: {
+    minHeight: 44,
+    minWidth: 64,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.three,
+    borderRadius: Spacing.two,
+    borderWidth: StyleSheet.hairlineWidth * 2,
   },
   mapLabel: {
     color: '#ffffff',
