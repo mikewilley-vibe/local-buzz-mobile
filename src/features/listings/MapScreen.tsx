@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { type ReactNode, useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 import MapView, { Callout, Marker, type Region } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -27,24 +27,33 @@ function regionFor(items: GeocodedListing[]): Region {
   };
 }
 
+type GeoState =
+  | { status: 'loading' }
+  | { status: 'ok'; items: GeocodedListing[] }
+  | { status: 'permission-denied' }
+  | { status: 'unlocated' };
+
 export function MapScreen() {
   const router = useRouter();
   const { state } = useListings();
-  const [geo, setGeo] = useState<{ status: 'loading' | 'done'; items: GeocodedListing[] }>({
-    status: 'loading',
-    items: [],
-  });
+  const [geo, setGeo] = useState<GeoState>({ status: 'loading' });
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    if (state.status !== 'success') return;
     let cancelled = false;
-    void geocodeListings(state.listings).then((items) => {
-      if (!cancelled) setGeo({ status: 'done', items });
+    if (state.status !== 'success') return;
+    void geocodeListings(state.listings).then((result) => {
+      if (cancelled) return;
+      if (result.status === 'ok') {
+        setGeo({ status: 'ok', items: result.items });
+        return;
+      }
+      setGeo({ status: result.status });
     });
     return () => {
       cancelled = true;
     };
-  }, [state]);
+  }, [state, attempt]);
 
   if (state.status === 'loading') {
     return (
@@ -91,7 +100,32 @@ export function MapScreen() {
     );
   }
 
-  if (geo.items.length === 0) {
+  if (geo.status === 'permission-denied') {
+    return (
+      <Centered>
+        <ThemedText type="subtitle" style={styles.centerText}>
+          Location is needed for the map
+        </ThemedText>
+        <ThemedText type="small" themeColor="textSecondary" style={styles.centerText}>
+          Allow location while using the app so we can place venue pins. We don’t track you.
+        </ThemedText>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => {
+            setGeo({ status: 'loading' });
+            setAttempt((n) => n + 1);
+          }}
+          style={styles.retryButton}
+        >
+          <ThemedText type="smallBold" style={styles.retryLabel}>
+            Try again
+          </ThemedText>
+        </Pressable>
+      </Centered>
+    );
+  }
+
+  if (geo.status === 'unlocated') {
     return (
       <Centered>
         <ThemedText type="subtitle" style={styles.centerText}>
@@ -100,6 +134,18 @@ export function MapScreen() {
         <ThemedText type="small" themeColor="textSecondary" style={styles.centerText}>
           Their addresses couldn’t be placed on the map.
         </ThemedText>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => {
+            setGeo({ status: 'loading' });
+            setAttempt((n) => n + 1);
+          }}
+          style={styles.retryButton}
+        >
+          <ThemedText type="smallBold" style={styles.retryLabel}>
+            Try again
+          </ThemedText>
+        </Pressable>
       </Centered>
     );
   }
@@ -149,5 +195,15 @@ const styles = StyleSheet.create({
   },
   centerText: {
     textAlign: 'center',
+  },
+  retryButton: {
+    marginTop: Spacing.three,
+    paddingHorizontal: Spacing.four,
+    paddingVertical: Spacing.two,
+    borderRadius: Spacing.two,
+    backgroundColor: '#208AEF',
+  },
+  retryLabel: {
+    color: '#ffffff',
   },
 });

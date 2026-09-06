@@ -5,6 +5,11 @@ import type { PublicListing } from '@/features/listings/useListings';
 
 export type Coord = { latitude: number; longitude: number };
 
+export type GeocodeResult =
+  | { status: 'ok'; items: GeocodedListing[] }
+  | { status: 'permission-denied' }
+  | { status: 'unlocated' };
+
 // Forward-geocoding is network-backed and rate-limited, so cache per address
 // for the app session to avoid re-geocoding the same venue repeatedly.
 const cache = new Map<string, Coord | null>();
@@ -28,9 +33,15 @@ export type GeocodedListing = { listing: PublicListing; coord: Coord };
 
 /**
  * Geocodes a set of listings from their addresses (on-device, no API key).
- * Listings whose address can't be resolved are dropped from the result.
+ * Android requires a foreground location permission before geocoding; iOS
+ * uses Apple's geocoder once that permission is granted in Expo Go.
  */
-export async function geocodeListings(listings: PublicListing[]): Promise<GeocodedListing[]> {
+export async function geocodeListings(listings: PublicListing[]): Promise<GeocodeResult> {
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== 'granted') {
+    return { status: 'permission-denied' };
+  }
+
   const settled = await Promise.all(
     listings.map(async (listing) => {
       const address = directionsQuery(listing);
@@ -40,5 +51,6 @@ export async function geocodeListings(listings: PublicListing[]): Promise<Geocod
     }),
   );
 
-  return settled.filter((item): item is GeocodedListing => item !== null);
+  const items = settled.filter((item): item is GeocodedListing => item !== null);
+  return items.length > 0 ? { status: 'ok', items } : { status: 'unlocated' };
 }
