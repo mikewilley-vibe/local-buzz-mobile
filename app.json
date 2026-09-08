@@ -10,6 +10,7 @@
     "ios": {
       "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.mikewilley.localbuzz",
+      "associatedDomains": ["applinks:localbuzzmobile.app", "applinks:www.localbuzzmobile.app"],
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Local Buzz uses location only to place venue pins on the map.",
         "ITSAppUsesNonExemptEncryption": false
@@ -27,6 +28,25 @@
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "localbuzzmobile.app",
+              "pathPrefix": "/auth"
+            },
+            {
+              "scheme": "https",
+              "host": "www.localbuzzmobile.app",
+              "pathPrefix": "/auth"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
       ]
     },
     "web": {
