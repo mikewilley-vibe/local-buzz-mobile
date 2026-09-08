@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { ensureAnonymousUser } from '@/lib/auth';
+import { getAuthRedirectTo } from '@/lib/auth-linking';
 import { supabase } from '@/lib/supabase';
 
 export type Account =
@@ -59,7 +60,10 @@ export function useAccount() {
       return;
     }
 
-    const { error } = await supabase.auth.updateUser({ email });
+    const { error } = await supabase.auth.updateUser(
+      { email },
+      { emailRedirectTo: getAuthRedirectTo() },
+    );
     if (error) {
       setFlow({ status: 'error', email, message: error.message });
       return;

@@ -83,7 +83,8 @@ export function AccountScreen() {
         <ThemedText type="subtitle">Save your account</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
           Add your email so your confirmations and submissions are kept and follow you to a new
-          phone. We’ll send a 6-digit code — no password needed.
+          phone. We’ll send a 6-digit code — no password needed. If the email includes a link, you
+          can tap it to finish in the app.
         </ThemedText>
 
         {!codeSent ? (

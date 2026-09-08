@@ -53,15 +53,20 @@ src/
     map.tsx                # Map
     submit.tsx             # Community submit
     account.tsx            # Save email / sign out
+    auth/callback.tsx      # Auth email deep-link landing
     listing/[id].tsx       # Detail + confirm / report / directions
   config/
     env.ts                 # Env loading + production-ref safety guard
   features/
     listings/              # List, filters, map, submit, detail actions
     account/               # Anonymous → email OTP
+  hooks/
+    use-auth-linking.ts    # Incoming Auth URLs → session + Account
   lib/
     supabase.ts            # Typed client (persisted session)
     auth.ts                # Anonymous sign-in + stale-session self-heal
+    auth-url.ts            # Parse / rewrite Auth callback URLs
+    auth-linking.ts        # emailRedirectTo + setSession / exchangeCode
     database.types.ts      # Generated types (from local-buzz-dev)
 ```
 
@@ -101,9 +106,86 @@ pins are missing, deny/allow again via Settings → Expo Go → Location.
 Account → enter email → 6-digit code. That upgrades the anonymous user in
 place (`updateUser({ email })` then `verifyOtp` type `email_change`).
 
+`updateUser` also sets `emailRedirectTo` to `Linking.createURL('auth/callback')`
+so a confirmation / magic-style link in the email opens this app. Incoming URLs
+are handled in `useAuthLinking`: PKCE `code`, implicit tokens, or `token_hash`
+establish the session; a code-only email still lands on Account for the OTP.
+
 Until custom SMTP is on, codes come from Supabase’s built-in mail (rate-limited
 and easy to land in spam). After Resend SMTP is enabled on **local-buzz-dev
 only**, codes should arrive from your verified domain.
+
+## Auth email deep links
+
+Custom scheme: `localbuzzmobile` (already in `app.json`). Callback path:
+`/auth/callback`.
+
+| Client | `emailRedirectTo` from `Linking.createURL` |
+|---|---|
+| Expo Go | `exp://<lan-ip>:8081/--/auth/callback` (changes with the packager) |
+| Dev / production build | `localbuzzmobile://auth/callback` |
+| Web | `https://<host>/auth/callback` |
+
+Expo Go does **not** open `localbuzzmobile://…`. Use the `exp://` URL the
+packager prints, or a development build for a stable custom-scheme test.
+Incoming-link support in Expo Go is limited — prefer a [development
+build](#development-build-app-icon) when verifying email taps on a device.
+
+### Test
+
+**Expo Go** (packager must be running):
+
+```bash
+npx uri-scheme open "exp://127.0.0.1:8081/--/auth/callback" --ios
+# tokens present (session should apply, then Account):
+npx uri-scheme open "exp://127.0.0.1:8081/--/auth/callback?code=TEST_CODE" --ios
+```
+
+**Development build:**
+
+```bash
+npx expo start --dev-client
+npx uri-scheme open "localbuzzmobile://auth/callback" --ios
+```
+
+Then: Account → send a code from **local-buzz-dev** → tap the email link (or
+enter the 6-digit code). After a successful link, Account should show the saved
+email.
+
+### Supabase redirect URLs (local-buzz-dev only)
+
+[Authentication → URL Configuration](https://supabase.com/dashboard/project/siddpzhdihmbexvnuawh/auth/url-configuration)
+on **local-buzz-dev** (`siddpzhdihmbexvnuawh`). Do **not** change production
+(`vghnfdukyosvvoqrxmok`).
+
+Add if missing:
+
+- `localbuzzmobile://**`
+- `exp://**` (Expo Go)
+- `http://localhost:8081/**` (Expo web)
+- Existing site / localhost HTTPS patterns (`https://localbuzzmobile.app/**`, www)
+
+Site URL can stay `https://localbuzzmobile.app`.
+
+### Universal Links / App Links (manual)
+
+`app.json` already lists `ios.associatedDomains` and Android `intentFilters`
+for `https://localbuzzmobile.app/auth`. Those only open the native app after:
+
+1. A **development or production build** (Expo Go cannot claim the domain).
+2. Hosted association files on the apex, HTTPS, no redirect, correct
+   `Content-Type`:
+   - `https://localbuzzmobile.app/.well-known/apple-app-site-association`
+   - `https://localbuzzmobile.app/.well-known/assetlinks.json`
+3. Apple Team ID + bundle `com.mikewilley.localbuzz` in the AASA; Android
+   package + signing-cert SHA-256 in `assetlinks.json` (`eas credentials -p android`).
+4. A working web deploy. The Vercel project on `localbuzzmobile.app` currently
+   has little Expo web output (apex often 500), so AASA/assetlinks cannot be
+   served from this app until that host is fixed or the files are hosted
+   elsewhere.
+
+Until those files are live, emailed **https** links stay in the browser;
+custom-scheme / `exp://` redirects still open the app.
 
 ## Custom SMTP (Resend) — local-buzz-dev only
 

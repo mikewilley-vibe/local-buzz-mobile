@@ -20,7 +20,7 @@ export const supabase = createClient<Database>(supabaseUrl, supabasePublishableK
     storage: AsyncStorage,
     persistSession: true,
     autoRefreshToken: true,
-    // No OAuth redirects in a native app; nothing to detect in a URL.
+    // Custom-scheme / Expo Go URLs are handled by `@/lib/auth-linking`.
     detectSessionInUrl: false,
   },
 });
