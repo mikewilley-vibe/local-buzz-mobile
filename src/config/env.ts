@@ -1,5 +1,5 @@
 /**
- * Environment configuration for the Local Buzz mobile app.
+ * Environment configuration for the HapsHere mobile app.
  *
  * Values are provided via Expo public env vars (inlined at build time):
  *   - EXPO_PUBLIC_SUPABASE_URL

@@ -18,7 +18,7 @@ export function MapScreen() {
           Map is available in the app
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary" style={styles.centerText}>
-          Open Local Buzz on your phone to see listings on a map.
+          Open HapsHere on your phone to see listings on a map.
         </ThemedText>
       </SafeAreaView>
     </ThemedView>

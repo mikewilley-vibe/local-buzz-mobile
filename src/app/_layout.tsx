@@ -6,6 +6,7 @@ import { Pressable, useColorScheme } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { useAuthLinking } from '@/hooks/use-auth-linking';
+import { PRODUCT_NAME } from '@/lib/brand';
 import { runDevConnectionCheck } from '@/lib/connection-check';
 
 void SplashScreen.preventAutoHideAsync();
@@ -25,7 +26,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="index"
           options={{
-            title: 'Local Buzz',
+            title: PRODUCT_NAME,
             headerLeft: () => (
               <Link href="/account" asChild>
                 <Pressable accessibilityRole="button" hitSlop={8}>

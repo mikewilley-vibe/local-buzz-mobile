@@ -37,7 +37,7 @@ export function AccountScreen() {
             {account.email}
           </ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Your confirmations and submissions follow you across devices.
+            Your HapsHere confirmations and submissions follow you across devices.
           </ThemedText>
           <Pressable
             accessibilityRole="button"
@@ -82,9 +82,10 @@ export function AccountScreen() {
       <SafeAreaView edges={['left', 'right', 'bottom']} style={[styles.flex, styles.content]}>
         <ThemedText type="subtitle">Save your account</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Add your email so your confirmations and submissions are kept and follow you to a new
-          phone. We’ll send a 6-digit code — no password needed. If the email includes a link, you
-          can tap it to finish in the app.
+          Add your email so your HapsHere confirmations and submissions are kept
+          and follow you to a new phone. We’ll send a 6-digit code — no password
+          needed. If the email includes a link, you can tap it to finish in the
+          app.
         </ThemedText>
 
         {!codeSent ? (

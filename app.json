@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Local Buzz",
+    "name": "HapsHere",
     "slug": "local-buzz-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,7 +12,7 @@
       "bundleIdentifier": "com.mikewilley.localbuzz",
       "associatedDomains": ["applinks:localbuzzmobile.app", "applinks:www.localbuzzmobile.app"],
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Local Buzz uses location only to place venue pins on the map.",
+        "NSLocationWhenInUseUsageDescription": "HapsHere uses location only to place venue pins on the map.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -58,7 +58,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Local Buzz uses location only to place venue pins on the map."
+          "locationWhenInUsePermission": "HapsHere uses location only to place venue pins on the map."
         }
       ],
       [

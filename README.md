@@ -1,7 +1,9 @@
-# Local Buzz — Mobile
+# HapsHere — Mobile
 
-Native (Expo / React Native) client for Local Buzz, built with Expo Router and a
-typed Supabase client.
+**HapsHere** — What’s happening here? Local events, specials, and good times.
+
+Native (Expo / React Native) client for HapsHere, built with Expo Router and a
+typed Supabase client. The GitHub repository remains `local-buzz-mobile`.
 
 ## Stack
 
@@ -204,15 +206,15 @@ Do **not** change production (`vghnfdukyosvvoqrxmok`). Never commit API keys.
    | Username | `resend` |
    | Password | Resend API key |
    | Sender email | an address on the verified domain |
-   | Sender name | `Local Buzz` |
+   | Sender name | `HapsHere` |
 
 5. Send a code from the Account screen and confirm it arrives (and that
    Resend’s logs show the message).
 
 ## Development build (app icon)
 
-Expo Go keeps its own home-screen icon. The Local Buzz pin/bee icon appears
-on a **development build**.
+Expo Go keeps its own home-screen icon. The current pin/bee icon appears
+on a **development build**. A final HapsHere icon is not in this change.
 
 ```bash
 npx eas-cli login

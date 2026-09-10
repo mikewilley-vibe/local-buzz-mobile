@@ -11,6 +11,7 @@ import { ListingCard } from '@/features/listings/ListingCard';
 import { ListingFilters } from '@/features/listings/ListingFilters';
 import { EMPTY_FILTERS, filterListings } from '@/features/listings/filters';
 import { useListings } from '@/features/listings/useListings';
+import { SUPPORTING_DESCRIPTION, TAGLINE } from '@/lib/brand';
 
 export function ListingsScreen() {
   const { state, reload } = useListings();
@@ -61,7 +62,8 @@ export function ListingsScreen() {
           No listings yet
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary" style={styles.centerText}>
-          Be the first to add a happy hour, trivia night, or food special near you.
+          {SUPPORTING_DESCRIPTION} Be the first to add a happy hour, trivia night,
+          or food special near you.
         </ThemedText>
         <Link href="/submit" asChild>
           <Pressable accessibilityRole="button" style={styles.retryButton}>
@@ -96,11 +98,17 @@ export function ListingsScreen() {
           contentContainerStyle={styles.listContent}
           keyboardShouldPersistTaps="handled"
           ListHeaderComponent={
-            <ListingFilters
-              listings={state.listings}
-              filters={filters}
-              onChange={setFilters}
-            />
+            <View style={styles.header}>
+              <ThemedText type="subtitle">{TAGLINE}</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                {SUPPORTING_DESCRIPTION}
+              </ThemedText>
+              <ListingFilters
+                listings={state.listings}
+                filters={filters}
+                onChange={setFilters}
+              />
+            </View>
           }
           ListEmptyComponent={
             <View style={styles.noResults}>
@@ -159,6 +167,9 @@ const styles = StyleSheet.create({
   listContent: {
     padding: Spacing.three,
     gap: Spacing.three,
+  },
+  header: {
+    gap: Spacing.two,
   },
   noResults: {
     alignItems: 'center',
