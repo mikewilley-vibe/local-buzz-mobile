@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
+import { Palette, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import {
   CITIES,
@@ -33,7 +33,7 @@ import {
 } from '@/features/listings/constants';
 import { type NewListingInput, useSubmitListing } from '@/features/listings/useSubmitListing';
 
-const PRIMARY = '#208AEF';
+const PRIMARY = Palette.amber;
 
 type Errors = Partial<Record<string, string>>;
 
@@ -295,7 +295,7 @@ export function SubmitListingScreen() {
               style={[styles.primaryButton, submitting && styles.buttonDisabled]}
             >
               {submitting ? (
-                <ActivityIndicator color="#ffffff" />
+                <ActivityIndicator color={Palette.ink} />
               ) : (
                 <ThemedText type="smallBold" style={styles.primaryLabel}>
                   Submit for review
@@ -409,10 +409,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   chipSelected: {
-    backgroundColor: 'rgba(32,138,239,0.15)',
+    backgroundColor: Palette.primaryWash,
   },
   chipLabelSelected: {
-    color: PRIMARY,
+    color: Palette.amberDeep,
   },
   primaryButton: {
     marginTop: Spacing.one,
@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
   },
   primaryLabel: {
-    color: '#ffffff',
+    color: Palette.ink,
   },
   buttonDisabled: {
     opacity: 0.5,

@@ -11,7 +11,7 @@ import {
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
+import { Palette, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { openDirections } from '@/lib/directions';
 import type { PublicListing } from '@/features/listings/useListings';
@@ -22,7 +22,7 @@ import {
 } from '@/features/listings/reportReasons';
 import { useListingActions } from '@/features/listings/useListingActions';
 
-const PRIMARY = '#208AEF';
+const PRIMARY = Palette.amber;
 const NOTE_MAX = 500;
 
 function verifiedLabel(value: string | null): string | null {
@@ -123,7 +123,7 @@ export function ListingActions({
           style={[styles.primaryButton, (confirmed || confirmBusy) && styles.buttonDisabled]}
         >
           {confirmStatus === 'saving' ? (
-            <ActivityIndicator color="#ffffff" />
+            <ActivityIndicator color={Palette.ink} />
           ) : (
             <ThemedText type="smallBold" style={styles.primaryLabel}>
               {confirmed ? 'Confirmed' : 'Yes, this is still accurate'}
@@ -246,7 +246,7 @@ export function ListingActions({
                 style={[styles.primaryButton, (!reason || submitting) && styles.buttonDisabled]}
               >
                 {submitting ? (
-                  <ActivityIndicator color="#ffffff" />
+                  <ActivityIndicator color={Palette.ink} />
                 ) : (
                   <ThemedText type="smallBold" style={styles.primaryLabel}>
                     Send report
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
   },
   primaryLabel: {
-    color: '#ffffff',
+    color: Palette.ink,
   },
   secondaryButton: {
     marginTop: Spacing.two,
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.three,
   },
   reasonRowSelected: {
-    backgroundColor: 'rgba(32,138,239,0.12)',
+    backgroundColor: Palette.primaryWash,
   },
   radio: {
     width: 20,

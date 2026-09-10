@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
+import { Palette, Spacing } from '@/constants/theme';
 import { ListingCard } from '@/features/listings/ListingCard';
 import { ListingFilters } from '@/features/listings/ListingFilters';
 import { EMPTY_FILTERS, filterListings } from '@/features/listings/filters';
@@ -182,10 +182,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.two,
     borderRadius: Spacing.two,
-    backgroundColor: '#208AEF',
+    backgroundColor: Palette.amber,
   },
   retryLabel: {
-    color: '#ffffff',
+    color: Palette.ink,
   },
   textButton: {
     minHeight: 44,

@@ -5,11 +5,38 @@ import { useEffect } from 'react';
 import { Image, Pressable, useColorScheme, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
+import { Palette } from '@/constants/theme';
 import { useAuthLinking } from '@/hooks/use-auth-linking';
 import { PRODUCT_NAME } from '@/lib/brand';
 import { runDevConnectionCheck } from '@/lib/connection-check';
 
 void SplashScreen.preventAutoHideAsync();
+
+const HapsHereLight = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: Palette.amberDeep,
+    background: Palette.background,
+    card: Palette.paper,
+    text: Palette.ink,
+    border: Palette.line,
+    notification: Palette.amber,
+  },
+};
+
+const HapsHereDark = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    primary: Palette.amber,
+    background: Palette.navy,
+    card: '#122445',
+    text: Palette.paper,
+    border: '#1A3358',
+    notification: Palette.amber,
+  },
+};
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -21,7 +48,7 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === 'dark' ? HapsHereDark : HapsHereLight}>
       <Stack>
         <Stack.Screen
           name="index"

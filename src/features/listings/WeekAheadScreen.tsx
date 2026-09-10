@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
+import { Palette, Spacing } from '@/constants/theme';
 import { WeekListingRow } from '@/features/listings/WeekListingRow';
 import { useListings } from '@/features/listings/useListings';
 import { weekAhead } from '@/features/listings/weekAhead';
@@ -133,9 +133,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.two,
     borderRadius: Spacing.two,
-    backgroundColor: '#208AEF',
+    backgroundColor: Palette.amber,
   },
   retryLabel: {
-    color: '#ffffff',
+    color: Palette.ink,
   },
 });

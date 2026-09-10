@@ -2,7 +2,7 @@ import { Link } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { Spacing } from '@/constants/theme';
+import { Palette, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { formatListingType } from '@/features/listings/format';
 import {
@@ -11,7 +11,7 @@ import {
 } from '@/features/listings/filters';
 import type { PublicListing } from '@/features/listings/useListings';
 
-const PRIMARY = '#208AEF';
+const PRIMARY = Palette.amber;
 
 function Chip({
   label,
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth * 2,
   },
   mapLabel: {
-    color: '#ffffff',
+    color: Palette.ink,
   },
   row: {
     gap: Spacing.two,
@@ -192,9 +192,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   chipSelected: {
-    backgroundColor: 'rgba(32,138,239,0.15)',
+    backgroundColor: Palette.primaryWash,
   },
   chipLabelSelected: {
-    color: PRIMARY,
+    color: Palette.amberDeep,
   },
 });

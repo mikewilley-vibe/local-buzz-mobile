@@ -1,26 +1,48 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * HapsHere color tokens — aligned with the web app and the official icon
+ * (navy field, amber/orange mark, cream paper, dark ink).
  */
 
 import '@/global.css';
 
 import { Platform } from 'react-native';
 
+export const Palette = {
+  navy: '#0A1B39',
+  ink: '#1C1917',
+  paper: '#FFFAF3',
+  wash: '#F3E6D4',
+  background: '#F6EFE4',
+  muted: '#6F6358',
+  line: '#E4D5C3',
+  amber: '#E8A54B',
+  amberHover: '#F0B56A',
+  amberDeep: '#9A5B12',
+  primaryWash: 'rgba(232, 165, 75, 0.18)',
+} as const;
+
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+    text: Palette.ink,
+    background: Palette.background,
+    backgroundElement: Palette.paper,
+    backgroundSelected: Palette.line,
+    textSecondary: Palette.muted,
+    primary: Palette.amber,
+    primaryDeep: Palette.amberDeep,
+    onPrimary: Palette.ink,
+    primaryWash: Palette.primaryWash,
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+    text: Palette.paper,
+    background: Palette.navy,
+    backgroundElement: '#122445',
+    backgroundSelected: '#1A3358',
+    textSecondary: '#C4B5A5',
+    primary: Palette.amber,
+    primaryDeep: Palette.amberHover,
+    onPrimary: Palette.ink,
+    primaryWash: 'rgba(232, 165, 75, 0.22)',
   },
 } as const;
 
