@@ -213,8 +213,8 @@ Do **not** change production (`vghnfdukyosvvoqrxmok`). Never commit API keys.
 
 ## Development build (app icon)
 
-Expo Go keeps its own home-screen icon. The current pin/bee icon appears
-on a **development build**. A final HapsHere icon is not in this change.
+Expo Go keeps its own home-screen icon. The approved HapsHere H-mark appears
+on a **development or production build**.
 
 ```bash
 npx eas-cli login
