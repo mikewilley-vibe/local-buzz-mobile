@@ -33,21 +33,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Align Expo SDK patch versions
-        if: github.event_name == 'push'
-        run: npx expo install --fix
-
-      - name: Save aligned dependency files
-        if: github.event_name == 'push'
-        uses: actions/upload-artifact@v4
-        with:
-          name: expo-sdk-57-dependencies
-          path: |
-            package.json
-            package-lock.json
-          if-no-files-found: error
-          retention-days: 1
-
       - name: Lint
         run: npm run lint
 
