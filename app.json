@@ -10,7 +10,10 @@
     "ios": {
       "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.mikewilley.localbuzz",
-      "associatedDomains": ["applinks:localbuzzmobile.app", "applinks:www.localbuzzmobile.app"],
+      "associatedDomains": [
+        "applinks:localbuzzmobile.app",
+        "applinks:www.localbuzzmobile.app"
+      ],
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "HapsHere uses location only to place venue pins on the map.",
         "ITSAppUsesNonExemptEncryption": false
@@ -45,7 +48,10 @@
               "pathPrefix": "/auth"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },
@@ -54,6 +60,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "./plugins/withIosMinDeployment",
       "expo-router",
       [
         "expo-location",
@@ -67,6 +74,14 @@
           "backgroundColor": "#0A1B39",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 180
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "16.4"
+          }
         }
       ]
     ],
