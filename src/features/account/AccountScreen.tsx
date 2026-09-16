@@ -1,5 +1,14 @@
 import { type ReactNode, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, TextInput } from 'react-native';
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
@@ -10,6 +19,7 @@ import { useAccount } from '@/features/account/useAccount';
 
 const PRIMARY = Palette.amber;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_DOMAINS = ['gmail.com', 'icloud.com', 'outlook.com'] as const;
 
 export function AccountScreen() {
   const theme = useTheme();
@@ -57,6 +67,7 @@ export function AccountScreen() {
   const codeSent = flow.status === 'sent' || flow.status === 'verifying';
   const busy = flow.status === 'sending' || flow.status === 'verifying';
   const flowError = flow.status === 'error' ? flow.message : null;
+  const emailLocalPart = email.trim().split('@')[0];
 
   function handleSend() {
     setLocalError(null);
@@ -77,65 +88,115 @@ export function AccountScreen() {
     void verifyCode(activeEmail, code);
   }
 
+  function applyEmailDomain(domain: (typeof EMAIL_DOMAINS)[number]) {
+    if (!emailLocalPart) return;
+    setEmail(`${emailLocalPart}@${domain}`);
+    setLocalError(null);
+  }
+
   return (
     <ThemedView style={styles.flex}>
-      <SafeAreaView edges={['left', 'right', 'bottom']} style={[styles.flex, styles.content]}>
-        <ThemedText type="subtitle">Save your account</ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Add your email so your HapsHere confirmations and submissions are kept
-          and follow you to a new phone. We’ll send a 6-digit code — no password
-          needed. If the email includes a link, you can tap it to finish in the
-          app.
-        </ThemedText>
-
-        {!codeSent ? (
-          <>
-            <TextInput
-              value={email}
-              onChangeText={setEmail}
-              placeholder="you@example.com"
-              placeholderTextColor={Palette.muted}
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="email-address"
-              editable={!busy}
-              style={[styles.input, { borderColor: border, color: theme.text }]}
-            />
-            <PrimaryButton label="Send code" busy={busy} onPress={handleSend} />
-          </>
-        ) : (
-          <>
+      <SafeAreaView edges={['left', 'right', 'bottom']} style={styles.flex}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.flex}
+        >
+          <ScrollView
+            automaticallyAdjustKeyboardInsets
+            contentContainerStyle={styles.content}
+            keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+            keyboardShouldPersistTaps="handled"
+          >
+            <ThemedText type="subtitle">Save your account</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              Enter the code sent to {flow.status === 'sent' || flow.status === 'verifying' ? flow.email : email}.
+              Add your email so your HapsHere confirmations and submissions are kept
+              and follow you to a new phone. We’ll send a 6-digit code — no password
+              needed. If the email includes a link, you can tap it to finish in the
+              app.
             </ThemedText>
-            <TextInput
-              value={code}
-              onChangeText={(t) => setCode(t.replace(/\D/g, '').slice(0, 6))}
-              placeholder="123456"
-              placeholderTextColor={Palette.muted}
-              keyboardType="number-pad"
-              editable={!busy}
-              style={[styles.input, styles.codeInput, { borderColor: border, color: theme.text }]}
-            />
-            <PrimaryButton label="Verify & save" busy={busy} onPress={handleVerify} />
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => {
-                setCode('');
-                resetFlow();
-              }}
-              style={styles.textButton}
-            >
-              <ThemedText type="smallBold">Use a different email</ThemedText>
-            </Pressable>
-          </>
-        )}
 
-        {(localError || flowError) && (
-          <ThemedText type="small" style={styles.errorText} accessibilityRole="alert">
-            {localError ?? flowError}
-          </ThemedText>
-        )}
+            {!codeSent ? (
+              <>
+                <TextInput
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="you@example.com"
+                  placeholderTextColor={Palette.muted}
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  autoCorrect={false}
+                  keyboardType="email-address"
+                  textContentType="emailAddress"
+                  returnKeyType="send"
+                  onSubmitEditing={handleSend}
+                  editable={!busy}
+                  style={[styles.input, { borderColor: border, color: theme.text }]}
+                />
+                <View accessibilityRole="none" style={styles.domainRow}>
+                  {EMAIL_DOMAINS.map((domain) => {
+                    const disabled = !emailLocalPart || busy;
+                    return (
+                      <Pressable
+                        key={domain}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Use @${domain}`}
+                        disabled={disabled}
+                        onPress={() => applyEmailDomain(domain)}
+                        style={[
+                          styles.domainButton,
+                          { borderColor: border },
+                          disabled && styles.buttonDisabled,
+                        ]}
+                      >
+                        <ThemedText type="smallBold">@{domain}</ThemedText>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+                <PrimaryButton label="Send code" busy={busy} onPress={handleSend} />
+              </>
+            ) : (
+              <>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Enter the code sent to{' '}
+                  {flow.status === 'sent' || flow.status === 'verifying' ? flow.email : email}.
+                </ThemedText>
+                <TextInput
+                  value={code}
+                  onChangeText={(t) => setCode(t.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="123456"
+                  placeholderTextColor={Palette.muted}
+                  autoComplete="one-time-code"
+                  textContentType="oneTimeCode"
+                  keyboardType="number-pad"
+                  editable={!busy}
+                  style={[
+                    styles.input,
+                    styles.codeInput,
+                    { borderColor: border, color: theme.text },
+                  ]}
+                />
+                <PrimaryButton label="Verify & save" busy={busy} onPress={handleVerify} />
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => {
+                    setCode('');
+                    resetFlow();
+                  }}
+                  style={styles.textButton}
+                >
+                  <ThemedText type="smallBold">Use a different email</ThemedText>
+                </Pressable>
+              </>
+            )}
+
+            {(localError || flowError) && (
+              <ThemedText type="small" style={styles.errorText} accessibilityRole="alert">
+                {localError ?? flowError}
+              </ThemedText>
+            )}
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </ThemedView>
   );
@@ -179,7 +240,9 @@ function Centered({ children }: { children: ReactNode }) {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   content: {
+    flexGrow: 1,
     padding: Spacing.three,
+    paddingBottom: Spacing.five,
     gap: Spacing.three,
   },
   centered: {
@@ -195,6 +258,18 @@ const styles = StyleSheet.create({
   codeInput: {
     letterSpacing: 6,
     fontSize: 20,
+  },
+  domainRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.two,
+  },
+  domainButton: {
+    minHeight: 40,
+    justifyContent: 'center',
+    borderWidth: StyleSheet.hairlineWidth * 2,
+    borderRadius: 999,
+    paddingHorizontal: Spacing.three,
   },
   primaryButton: {
     minHeight: 48,
