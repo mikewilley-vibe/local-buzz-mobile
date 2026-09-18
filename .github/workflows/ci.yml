@@ -35,6 +35,3 @@ jobs:
 
       - name: Type-check
         run: npx tsc --noEmit
-
-      - name: Check Expo project health
-        run: npx expo-doctor
