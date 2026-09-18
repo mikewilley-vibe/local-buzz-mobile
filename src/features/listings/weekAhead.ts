@@ -12,35 +12,33 @@ const WEEKDAY_KEYS = [
 
 export type DayBucket = {
   weekday: (typeof WEEKDAY_KEYS)[number];
-  /** 0 = today */
+  /** 0 = Monday of the current Eastern week */
   offset: number;
   heading: string;
+  dayNumber: number;
+  isToday: boolean;
   listings: PublicListing[];
 };
 
-function startOfLocalDay(d: Date): Date {
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+function easternDateParts(date: Date) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  }).formatToParts(date);
+  const number = (type: Intl.DateTimeFormatPartTypes) =>
+    Number(parts.find((part) => part.type === type)?.value);
+  return { year: number('year'), month: number('month'), day: number('day') };
 }
 
-function addDays(d: Date, n: number): Date {
-  const next = new Date(d);
-  next.setDate(d.getDate() + n);
-  return next;
-}
-
-function weekdayKey(d: Date): (typeof WEEKDAY_KEYS)[number] {
-  return WEEKDAY_KEYS[d.getDay()];
-}
-
-function headingFor(date: Date, offset: number): string {
-  const calendar = date.toLocaleDateString(undefined, {
+function headingFor(date: Date): string {
+  return new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
     month: 'short',
     day: 'numeric',
-  });
-  if (offset === 0) return `Today · ${calendar}`;
-  if (offset === 1) return `Tomorrow · ${calendar}`;
-  return calendar;
+    timeZone: 'UTC',
+  }).format(date);
 }
 
 function timeValue(listing: PublicListing): string {
@@ -51,13 +49,15 @@ function listingRunsOn(listing: PublicListing, weekday: string): boolean {
   return (listing.days ?? []).some((day) => day.toLowerCase() === weekday);
 }
 
-/** Next 7 local calendar days, each with listings whose `days` include that weekday. */
+/** Current Monday–Sunday week in Eastern time, matching the public calendar. */
 export function weekAhead(listings: PublicListing[], from: Date = new Date()): DayBucket[] {
-  const start = startOfLocalDay(from);
+  const today = easternDateParts(from);
+  const todayUtc = Date.UTC(today.year, today.month - 1, today.day);
+  const mondayOffset = (new Date(todayUtc).getUTCDay() + 6) % 7;
 
   return Array.from({ length: 7 }, (_, offset) => {
-    const date = addDays(start, offset);
-    const weekday = weekdayKey(date);
+    const date = new Date(todayUtc + (offset - mondayOffset) * 86_400_000);
+    const weekday = WEEKDAY_KEYS[date.getUTCDay()];
     const dayListings = listings
       .filter((listing) => listingRunsOn(listing, weekday))
       .slice()
@@ -70,7 +70,9 @@ export function weekAhead(listings: PublicListing[], from: Date = new Date()): D
     return {
       weekday,
       offset,
-      heading: headingFor(date, offset),
+      heading: headingFor(date),
+      dayNumber: date.getUTCDate(),
+      isToday: date.getTime() === todayUtc,
       listings: dayListings,
     };
   });

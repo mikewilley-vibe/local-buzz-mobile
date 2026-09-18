@@ -1,21 +1,21 @@
 import { Link } from 'expo-router';
 import type { ReactNode } from 'react';
-import { useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
+import { BrandColors, Spacing } from '@/constants/theme';
 import { ListingCard } from '@/features/listings/ListingCard';
 import { ListingFilters } from '@/features/listings/ListingFilters';
+import { useListingFilters } from '@/features/listings/ListingFiltersContext';
 import { EMPTY_FILTERS, filterListings } from '@/features/listings/filters';
 import { useListings } from '@/features/listings/useListings';
 import { PRODUCT_NAME } from '@/lib/brand';
 
 export function ListingsScreen() {
   const { state, reload } = useListings();
-  const [filters, setFilters] = useState(EMPTY_FILTERS);
+  const { filters, setFilters } = useListingFilters();
 
   // Loading
   if (state.status === 'loading') {
@@ -172,10 +172,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.two,
     borderRadius: Spacing.two,
-    backgroundColor: '#208AEF',
+    backgroundColor: BrandColors.amber,
   },
   retryLabel: {
-    color: '#ffffff',
+    color: BrandColors.ink,
   },
   textButton: {
     minHeight: 44,

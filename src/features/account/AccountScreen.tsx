@@ -4,11 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
+import { BrandColors, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useAccount } from '@/features/account/useAccount';
 
-const PRIMARY = '#208AEF';
+const PRIMARY = BrandColors.amber;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function AccountScreen() {
@@ -93,7 +93,7 @@ export function AccountScreen() {
               value={email}
               onChangeText={setEmail}
               placeholder="you@example.com"
-              placeholderTextColor="#8A8F98"
+              placeholderTextColor={BrandColors.muted}
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="email-address"
@@ -111,7 +111,7 @@ export function AccountScreen() {
               value={code}
               onChangeText={(t) => setCode(t.replace(/\D/g, '').slice(0, 6))}
               placeholder="123456"
-              placeholderTextColor="#8A8F98"
+              placeholderTextColor={BrandColors.muted}
               keyboardType="number-pad"
               editable={!busy}
               style={[styles.input, styles.codeInput, { borderColor: border, color: theme.text }]}
@@ -157,7 +157,7 @@ function PrimaryButton({
       style={[styles.primaryButton, busy && styles.buttonDisabled]}
     >
       {busy ? (
-        <ActivityIndicator color="#ffffff" />
+        <ActivityIndicator color={BrandColors.ink} />
       ) : (
         <ThemedText type="smallBold" style={styles.primaryLabel}>
           {label}
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     backgroundColor: PRIMARY,
     paddingHorizontal: Spacing.four,
   },
-  primaryLabel: { color: '#ffffff' },
+  primaryLabel: { color: BrandColors.ink },
   buttonDisabled: { opacity: 0.5 },
   outlineButton: {
     minHeight: 48,
