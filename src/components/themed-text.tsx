@@ -1,10 +1,20 @@
-import { Platform, StyleSheet, Text, type TextProps } from 'react-native';
+import { StyleSheet, Text, type TextProps } from 'react-native';
 
 import { BrandColors, Fonts, ThemeColor } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 export type ThemedTextProps = TextProps & {
-  type?: 'default' | 'title' | 'small' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code';
+  type?:
+    | 'default'
+    | 'title'
+    | 'display'
+    | 'eyebrow'
+    | 'small'
+    | 'smallBold'
+    | 'subtitle'
+    | 'link'
+    | 'linkPrimary'
+    | 'code';
   themeColor?: ThemeColor;
 };
 
@@ -17,6 +27,8 @@ export function ThemedText({ style, type = 'default', themeColor, ...rest }: The
         { color: theme[themeColor ?? 'text'] },
         type === 'default' && styles.default,
         type === 'title' && styles.title,
+        type === 'display' && styles.display,
+        type === 'eyebrow' && styles.eyebrow,
         type === 'small' && styles.small,
         type === 'smallBold' && styles.smallBold,
         type === 'subtitle' && styles.subtitle,
@@ -31,43 +43,61 @@ export function ThemedText({ style, type = 'default', themeColor, ...rest }: The
 }
 
 const styles = StyleSheet.create({
+  // Body copy — Outfit, matching the website's sans.
   small: {
+    fontFamily: Fonts.body.medium,
     fontSize: 14,
     lineHeight: 20,
-    fontWeight: 500,
   },
   smallBold: {
+    fontFamily: Fonts.body.bold,
     fontSize: 14,
     lineHeight: 20,
-    fontWeight: 700,
   },
   default: {
+    fontFamily: Fonts.body.medium,
     fontSize: 16,
     lineHeight: 24,
-    fontWeight: 500,
   },
+  // Headings — Fraunces serif, matching the website's display type.
   title: {
+    fontFamily: Fonts.display.bold,
     fontSize: 48,
-    fontWeight: 600,
     lineHeight: 52,
   },
+  display: {
+    fontFamily: Fonts.display.bold,
+    fontSize: 34,
+    lineHeight: 40,
+    letterSpacing: -0.5,
+  },
   subtitle: {
+    fontFamily: Fonts.display.semibold,
     fontSize: 32,
-    lineHeight: 44,
-    fontWeight: 600,
+    lineHeight: 40,
+  },
+  // Small-caps brand/section label, like the website's amber eyebrow.
+  eyebrow: {
+    fontFamily: Fonts.body.bold,
+    fontSize: 12,
+    lineHeight: 16,
+    letterSpacing: 1.4,
+    textTransform: 'uppercase',
+    color: BrandColors.amberDeep,
   },
   link: {
+    fontFamily: Fonts.body.medium,
     lineHeight: 30,
     fontSize: 14,
   },
   linkPrimary: {
+    fontFamily: Fonts.body.bold,
     lineHeight: 30,
     fontSize: 14,
     color: BrandColors.amberDeep,
   },
   code: {
     fontFamily: Fonts.mono,
-    fontWeight: Platform.select({ android: 700 }) ?? 500,
     fontSize: 12,
   },
 });
