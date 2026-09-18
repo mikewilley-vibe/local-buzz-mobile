@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Local Buzz",
+    "name": "Local Buzz 757",
     "slug": "local-buzz-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -10,9 +10,15 @@
     "ios": {
       "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.mikewilley.localbuzz",
-      "associatedDomains": ["applinks:localbuzzmobile.app", "applinks:www.localbuzzmobile.app"],
+      "deploymentTarget": "16.4",
+      "associatedDomains": [
+        "applinks:localbuzzmobile.app",
+        "applinks:www.localbuzzmobile.app"
+      ],
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Local Buzz uses location only to place venue pins on the map.",
+        "CFBundleDisplayName": "Local Buzz 757",
+        "CFBundleName": "Local Buzz 757",
+        "NSLocationWhenInUseUsageDescription": "Local Buzz 757 uses location only to place venue pins on the map.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -54,11 +60,12 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "./plugins/withIosMinDeployment",
       "expo-router",
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Local Buzz uses location only to place venue pins on the map."
+          "locationWhenInUsePermission": "Local Buzz 757 uses location only to place venue pins on the map."
         }
       ],
       [
@@ -67,6 +74,14 @@
           "backgroundColor": "#208AEF",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 180
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "16.4"
+          }
         }
       ]
     ],

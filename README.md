@@ -1,7 +1,8 @@
-# Local Buzz — Mobile
+# Local Buzz 757 — Mobile
 
-Native (Expo / React Native) client for Local Buzz, built with Expo Router and a
-typed Supabase client.
+Native (Expo / React Native) client for **Local Buzz 757**, built with Expo
+Router and a typed Supabase client. The GitHub repository remains
+`local-buzz-mobile`.
 
 ## Stack
 
@@ -204,15 +205,15 @@ Do **not** change production (`vghnfdukyosvvoqrxmok`). Never commit API keys.
    | Username | `resend` |
    | Password | Resend API key |
    | Sender email | an address on the verified domain |
-   | Sender name | `Local Buzz` |
+   | Sender name | `Local Buzz 757` |
 
 5. Send a code from the Account screen and confirm it arrives (and that
    Resend’s logs show the message).
 
 ## Development build (app icon)
 
-Expo Go keeps its own home-screen icon. The Local Buzz pin/bee icon appears
-on a **development build**.
+Expo Go keeps its own home-screen icon. The Local Buzz 757 pin/bee icon appears
+on a **development or production build**.
 
 ```bash
 npx eas-cli login
@@ -221,6 +222,22 @@ npx eas-cli build --profile development --platform ios
 
 Install the build on the phone, then `npx expo start --dev-client`. iOS needs
 an Apple Developer account the first time.
+
+## TestFlight (iOS production)
+
+Home-screen and in-app display name is **Local Buzz 757**. Bundle id, Expo slug,
+URL scheme, and Supabase wiring are unchanged.
+
+```bash
+eas build --platform ios --profile production
+eas submit --platform ios --latest
+```
+
+`eas submit --platform ios --profile production` is equivalent. The production
+profile auto-increments the iOS build number (`cli.appVersionSource: remote`)
+and submits to App Store Connect app `6810269202`.
+
+See `docs/app-store-release.md` for the smoke test and App Store checklist.
 
 ## Roadmap
 

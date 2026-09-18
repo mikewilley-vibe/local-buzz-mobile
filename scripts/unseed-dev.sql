@@ -1,4 +1,4 @@
--- Local Buzz — remove DEV seed data (local-buzz-dev only)
+-- Local Buzz 757 — remove DEV seed data (local-buzz-dev only)
 -- =============================================================================
 -- Deletes the rows created by scripts/seed-dev.sql. Related confirmations and
 -- reports are removed automatically via ON DELETE CASCADE.
