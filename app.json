@@ -11,10 +11,6 @@
       "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.mikewilley.localbuzz",
       "deploymentTarget": "16.4",
-      "associatedDomains": [
-        "applinks:localbuzzmobile.app",
-        "applinks:www.localbuzzmobile.app"
-      ],
       "infoPlist": {
         "CFBundleDisplayName": "Local Buzz 757",
         "CFBundleName": "Local Buzz 757",
@@ -51,7 +47,10 @@
               "pathPrefix": "/auth"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },
