@@ -7,17 +7,22 @@ Last audited: 2026-09-18
 - Customer-facing product name is **Local Buzz 757**.
 - Draft PR #2 (`cursor/rebrand-hapshere`) rebranded to HapsHere and is
   superseded. Do not merge it.
-- Existing Local Buzz pin/bee icons and the current blue splash remain.
+- The existing Local Buzz pin/bee icon remains; the splash now uses the site's
+  amber color. The home screen now opens on the weekly calendar.
 - App Store Connect app id `6810269202` is wired in `eas.json` for iOS submit.
 - Production EAS builds auto-increment the iOS build number
   (`cli.appVersionSource: remote`).
-- A TestFlight build from this branch should be treated as a naming/config
-  check. Confirm which Supabase backend the EAS `production` environment
-  points at before a public release.
+- The last submitted TestFlight binary, build 12 from `6de1c184`, predates
+  the calendar and theme changes. A new binary is required to show them.
+- On 2026-09-18 the EAS `production` environment was updated from the
+  development Supabase project to the website's live project
+  (`vghnfdukyosvvoqrxmok`). Its publishable key was matched to the website
+  and the public listing endpoint returned 36 rows. Verify the backend again
+  when the next TestFlight binary is installed.
 
-Internal infrastructure is unchanged: GitHub repo `local-buzz-mobile`, Expo
-slug `local-buzz-mobile`, bundle/package id `com.mikewilley.localbuzz`, URL
-scheme `localbuzzmobile`, associated domains, and Supabase project wiring.
+App identity is unchanged: GitHub repo `local-buzz-mobile`, Expo slug
+`local-buzz-mobile`, bundle/package id `com.mikewilley.localbuzz`, and URL
+scheme `localbuzzmobile`.
 
 ## TestFlight build and submit
 
@@ -91,7 +96,7 @@ listings. Do not include private data or pending submissions.
 
 1. Listings feed — Local Buzz 757
 2. Search and filters
-3. Week-ahead view
+3. Calendar agenda and week views
 4. Native venue map
 5. Listing detail with directions and confirmation
 6. Community submission form
@@ -105,7 +110,8 @@ Please test the complete Local Buzz 757 discovery flow:
 
 1. Confirm the home-screen name, splash, and in-app header say Local Buzz 757.
 2. Browse, search, and filter listings.
-3. Open the week view and map.
+3. Open the calendar, select a day, switch between Agenda and Week, filter by
+   city, type, and ZIP, and open the map.
 4. Open a listing and launch directions.
 5. Confirm an accurate listing.
 6. Report an inaccurate listing.
@@ -124,10 +130,12 @@ Run this against the TestFlight build before App Review:
 - No screen displays “HapsHere” or a bare “Local Buzz” (without 757) to
   customers.
 - Listings load successfully.
-- Loading, empty, error, and populated states are readable in light and dark
-  appearance.
+- Loading, empty, error, and populated states use the same warm palette with
+  either device appearance setting.
 - Search, city filters, type filters, and reset work.
-- Week view uses the correct dates and listings.
+- Calendar uses the current Monday–Sunday Eastern week and the correct
+  recurring listings for each selected day. Today advances after Eastern
+  midnight, and filters persist when switching between Calendar and Browse.
 - Map permission has understandable copy; venue pins open the correct details.
 - Directions open the correct address.
 - Confirmation succeeds and a duplicate is handled.

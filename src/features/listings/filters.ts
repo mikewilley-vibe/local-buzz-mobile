@@ -5,14 +5,28 @@ export type ListingFilterState = {
   query: string;
   /** Exact `listing_type` to match, or null for all. */
   type: string | null;
-  /** Exact `city` to match, or null for all. */
-  city: string | null;
+  /** Selected cities, or an empty list for all. */
+  cities: string[];
+  /** 5-digit ZIP or ZIP+4. A partial entry is not applied until valid. */
+  zip: string;
 };
 
-export const EMPTY_FILTERS: ListingFilterState = { query: '', type: null, city: null };
+export const EMPTY_FILTERS: ListingFilterState = { query: '', type: null, cities: [], zip: '' };
 
 export function hasActiveFilters(f: ListingFilterState): boolean {
-  return f.query.trim().length > 0 || f.type !== null || f.city !== null;
+  return f.query.trim().length > 0 || f.type !== null || f.cities.length > 0 || f.zip.trim().length > 0;
+}
+
+export function isZipCode(value: string): boolean {
+  return /^\d{5}(-\d{4})?$/.test(value);
+}
+
+export function listingMatchesZipFilter(listingZip: string | null, filterZip: string): boolean {
+  const stored = listingZip?.trim() ?? '';
+  if (!isZipCode(stored) || !isZipCode(filterZip)) return false;
+  return filterZip.length === 5
+    ? stored === filterZip || stored.startsWith(filterZip + '-')
+    : stored === filterZip;
 }
 
 /** Distinct, sorted non-empty values. */
@@ -27,10 +41,13 @@ export function filterListings(
   filters: ListingFilterState,
 ): PublicListing[] {
   const query = filters.query.trim().toLowerCase();
+  const zip = filters.zip.trim();
+  const activeZip = isZipCode(zip) ? zip : null;
 
   return listings.filter((listing) => {
     if (filters.type && listing.listing_type !== filters.type) return false;
-    if (filters.city && listing.city !== filters.city) return false;
+    if (filters.cities.length > 0 && !filters.cities.includes(listing.city)) return false;
+    if (activeZip && !listingMatchesZipFilter(listing.zip_code, activeZip)) return false;
 
     if (query.length > 0) {
       const haystack = [

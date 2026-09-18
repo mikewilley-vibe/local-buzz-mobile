@@ -2,16 +2,17 @@ import { Link } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { Spacing } from '@/constants/theme';
+import { BrandColors, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { formatListingType } from '@/features/listings/format';
 import {
   type ListingFilterState,
+  isZipCode,
   uniqueSorted,
 } from '@/features/listings/filters';
 import type { PublicListing } from '@/features/listings/useListings';
 
-const PRIMARY = '#208AEF';
+const PRIMARY = BrandColors.amber;
 
 function Chip({
   label,
@@ -46,10 +47,12 @@ export function ListingFilters({
   listings,
   filters,
   onChange,
+  showNavigation = true,
 }: {
   listings: PublicListing[];
   filters: ListingFilterState;
   onChange: (next: ListingFilterState) => void;
+  showNavigation?: boolean;
 }) {
   const theme = useTheme();
   const border = theme.backgroundSelected;
@@ -64,31 +67,51 @@ export function ListingFilters({
           value={filters.query}
           onChangeText={(query) => onChange({ ...filters, query })}
           placeholder="Search happy hours, trivia, venues…"
-          placeholderTextColor="#8A8F98"
+          placeholderTextColor={BrandColors.muted}
           autoCorrect={false}
           returnKeyType="search"
           style={[styles.search, { borderColor: border, color: theme.text }]}
         />
-        <Link href="/week" asChild>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="View specials for the week ahead"
-            style={StyleSheet.flatten([styles.sideButton, { borderColor: border }])}
-          >
-            <ThemedText type="smallBold">Week</ThemedText>
-          </Pressable>
-        </Link>
-        <Link href="/map" asChild>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="View listings on a map"
-            style={styles.mapButton}
-          >
-            <ThemedText type="smallBold" style={styles.mapLabel}>
-              Map
-            </ThemedText>
-          </Pressable>
-        </Link>
+        {showNavigation ? (
+          <Link href="/week" asChild>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="View this week's calendar"
+              style={StyleSheet.flatten([styles.sideButton, { borderColor: border }])}
+            >
+              <ThemedText type="smallBold">Calendar</ThemedText>
+            </Pressable>
+          </Link>
+        ) : null}
+        {showNavigation ? (
+          <Link href="/map" asChild>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="View listings on a map"
+              style={styles.mapButton}
+            >
+              <ThemedText type="smallBold" style={styles.mapLabel}>
+                Map
+              </ThemedText>
+            </Pressable>
+          </Link>
+        ) : null}
+      </View>
+
+      <View style={styles.zipRow}>
+        <TextInput
+          value={filters.zip}
+          onChangeText={(zip) => onChange({ ...filters, zip })}
+          placeholder="ZIP code"
+          accessibilityLabel="Filter by ZIP code"
+          placeholderTextColor={BrandColors.muted}
+          keyboardType="numbers-and-punctuation"
+          maxLength={10}
+          style={[styles.zipInput, { borderColor: border, color: theme.text, backgroundColor: theme.backgroundElement }]}
+        />
+        <ThemedText type="small" themeColor="textSecondary">
+          {filters.zip.trim() && !isZipCode(filters.zip.trim()) ? 'Enter 5 digits or ZIP+4' : 'Optional'}
+        </ThemedText>
       </View>
 
       {types.length > 0 ? (
@@ -123,16 +146,21 @@ export function ListingFilters({
         >
           <Chip
             label="All cities"
-            selected={filters.city === null}
-            onPress={() => onChange({ ...filters, city: null })}
+            selected={filters.cities.length === 0}
+            onPress={() => onChange({ ...filters, cities: [] })}
             border={border}
           />
           {cities.map((city) => (
             <Chip
               key={city}
               label={city}
-              selected={filters.city === city}
-              onPress={() => onChange({ ...filters, city: filters.city === city ? null : city })}
+              selected={filters.cities.includes(city)}
+              onPress={() => onChange({
+                ...filters,
+                cities: filters.cities.includes(city)
+                  ? filters.cities.filter((selected) => selected !== city)
+                  : [...filters.cities, city],
+              })}
               border={border}
             />
           ))}
@@ -158,7 +186,10 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth * 2,
     borderRadius: Spacing.two,
     paddingHorizontal: Spacing.three,
+    backgroundColor: BrandColors.wash,
   },
+  zipRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
+  zipInput: { minHeight: 44, width: 130, borderWidth: StyleSheet.hairlineWidth * 2, borderRadius: Spacing.two, paddingHorizontal: Spacing.three },
   mapButton: {
     minHeight: 44,
     minWidth: 64,
@@ -178,7 +209,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth * 2,
   },
   mapLabel: {
-    color: '#ffffff',
+    color: BrandColors.ink,
   },
   row: {
     gap: Spacing.two,
@@ -192,9 +223,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   chipSelected: {
-    backgroundColor: 'rgba(32,138,239,0.15)',
+    backgroundColor: BrandColors.wash,
   },
   chipLabelSelected: {
-    color: PRIMARY,
+    color: BrandColors.amberDeep,
   },
 });

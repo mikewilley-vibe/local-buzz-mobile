@@ -1,5 +1,5 @@
-import { ListingsScreen } from '@/features/listings/ListingsScreen';
+import { WeekAheadScreen } from '@/features/listings/WeekAheadScreen';
 
-export default function ListingsRoute() {
-  return <ListingsScreen />;
+export default function CalendarRoute() {
+  return <WeekAheadScreen />;
 }

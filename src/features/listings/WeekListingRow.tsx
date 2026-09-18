@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
+import { BrandColors, Spacing } from '@/constants/theme';
 import { formatListingType, formatLocation, formatTimeRange } from '@/features/listings/format';
 import type { PublicListing } from '@/features/listings/useListings';
 
@@ -50,6 +50,8 @@ const styles = StyleSheet.create({
   },
   row: {
     borderRadius: Spacing.two,
+    borderWidth: 1,
+    borderColor: BrandColors.line,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.three,
     gap: Spacing.half,

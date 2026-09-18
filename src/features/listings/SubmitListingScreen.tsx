@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
+import { BrandColors, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import {
   CITIES,
@@ -33,7 +33,7 @@ import {
 } from '@/features/listings/constants';
 import { type NewListingInput, useSubmitListing } from '@/features/listings/useSubmitListing';
 
-const PRIMARY = '#208AEF';
+const PRIMARY = BrandColors.amber;
 
 type Errors = Partial<Record<string, string>>;
 
@@ -160,7 +160,7 @@ export function SubmitListingScreen() {
                 value={placeName}
                 onChangeText={setPlaceName}
                 placeholder="e.g. Rusty Anchor Tavern"
-                placeholderTextColor="#8A8F98"
+                placeholderTextColor={BrandColors.muted}
                 maxLength={PLACE_NAME_MAX}
                 style={[styles.input, { borderColor: border, color: theme.text }]}
               />
@@ -214,7 +214,7 @@ export function SubmitListingScreen() {
                   value={startTime}
                   onChangeText={setStartTime}
                   placeholder="17:00"
-                  placeholderTextColor="#8A8F98"
+                  placeholderTextColor={BrandColors.muted}
                   autoCapitalize="none"
                   style={[styles.input, { borderColor: border, color: theme.text }]}
                 />
@@ -224,7 +224,7 @@ export function SubmitListingScreen() {
                   value={endTime}
                   onChangeText={setEndTime}
                   placeholder="19:30"
-                  placeholderTextColor="#8A8F98"
+                  placeholderTextColor={BrandColors.muted}
                   autoCapitalize="none"
                   style={[styles.input, { borderColor: border, color: theme.text }]}
                 />
@@ -236,7 +236,7 @@ export function SubmitListingScreen() {
                 value={description}
                 onChangeText={(t) => setDescription(t.slice(0, DESCRIPTION_MAX))}
                 placeholder="What’s the deal? Days, times, price…"
-                placeholderTextColor="#8A8F98"
+                placeholderTextColor={BrandColors.muted}
                 multiline
                 numberOfLines={4}
                 style={[styles.input, styles.textArea, { borderColor: border, color: theme.text }]}
@@ -251,7 +251,7 @@ export function SubmitListingScreen() {
                 value={streetAddress}
                 onChangeText={setStreetAddress}
                 placeholder="e.g. 12 Harbor St"
-                placeholderTextColor="#8A8F98"
+                placeholderTextColor={BrandColors.muted}
                 maxLength={STREET_ADDRESS_MAX}
                 style={[styles.input, { borderColor: border, color: theme.text }]}
               />
@@ -262,7 +262,7 @@ export function SubmitListingScreen() {
                 value={zip}
                 onChangeText={setZip}
                 placeholder="23510"
-                placeholderTextColor="#8A8F98"
+                placeholderTextColor={BrandColors.muted}
                 keyboardType="numbers-and-punctuation"
                 style={[styles.input, { borderColor: border, color: theme.text }]}
               />
@@ -273,7 +273,7 @@ export function SubmitListingScreen() {
                 value={sourceUrl}
                 onChangeText={setSourceUrl}
                 placeholder="https://…"
-                placeholderTextColor="#8A8F98"
+                placeholderTextColor={BrandColors.muted}
                 autoCapitalize="none"
                 keyboardType="url"
                 style={[styles.input, { borderColor: border, color: theme.text }]}
@@ -295,7 +295,7 @@ export function SubmitListingScreen() {
               style={[styles.primaryButton, submitting && styles.buttonDisabled]}
             >
               {submitting ? (
-                <ActivityIndicator color="#ffffff" />
+                <ActivityIndicator color={BrandColors.ink} />
               ) : (
                 <ThemedText type="smallBold" style={styles.primaryLabel}>
                   Submit for review
@@ -409,10 +409,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   chipSelected: {
-    backgroundColor: 'rgba(32,138,239,0.15)',
+    backgroundColor: BrandColors.wash,
   },
   chipLabelSelected: {
-    color: PRIMARY,
+    color: BrandColors.amberDeep,
   },
   primaryButton: {
     marginTop: Spacing.one,
@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
   },
   primaryLabel: {
-    color: '#ffffff',
+    color: BrandColors.ink,
   },
   buttonDisabled: {
     opacity: 0.5,

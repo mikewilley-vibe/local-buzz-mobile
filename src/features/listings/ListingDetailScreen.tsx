@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
+import { BrandColors, Spacing } from '@/constants/theme';
 import { ListingActions } from '@/features/listings/ListingActions';
 import {
   formatFreshness,
@@ -194,9 +194,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.two,
     borderRadius: Spacing.two,
-    backgroundColor: '#208AEF',
+    backgroundColor: BrandColors.amber,
   },
   retryLabel: {
-    color: '#ffffff',
+    color: BrandColors.ink,
   },
 });
