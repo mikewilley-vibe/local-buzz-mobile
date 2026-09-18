@@ -1,4 +1,4 @@
--- Local Buzz — DEV seed data (local-buzz-dev only)
+-- Local Buzz 757 — DEV seed data (local-buzz-dev only)
 -- =============================================================================
 -- Inserts a handful of APPROVED listings so the mobile app has content to test
 -- against (list, detail, confirm, report). Safe to run repeatedly: it upserts

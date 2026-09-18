@@ -8,7 +8,7 @@ import { supabasePublishableKey, supabaseUrl } from '@/config/env';
 import type { Database } from '@/lib/database.types';
 
 /**
- * Typed Supabase client for the Local Buzz mobile app.
+ * Typed Supabase client for the Local Buzz 757 mobile app.
  *
  * Sessions are persisted with AsyncStorage so the anonymous identity used for
  * listing actions (confirm / report) survives app restarts. There is no

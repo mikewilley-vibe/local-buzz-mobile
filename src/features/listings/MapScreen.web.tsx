@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
+import { PRODUCT_NAME } from '@/lib/brand';
 
 /**
  * Web fallback. `react-native-maps` has no web implementation, so the web build
@@ -18,7 +19,7 @@ export function MapScreen() {
           Map is available in the app
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary" style={styles.centerText}>
-          Open Local Buzz on your phone to see listings on a map.
+          Open {PRODUCT_NAME} on your phone to see listings on a map.
         </ThemedText>
       </SafeAreaView>
     </ThemedView>
