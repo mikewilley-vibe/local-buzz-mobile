@@ -19,8 +19,12 @@ export function useAuthLinking() {
     handled.current = url;
 
     void (async () => {
-      await createSessionFromUrl(url);
-      router.replace('/account');
+      const result = await createSessionFromUrl(url);
+      if (result.status === 'error') {
+        router.replace({ pathname: '/account', params: { authError: result.message } });
+      } else {
+        router.replace('/account');
+      }
     })();
   }, [url, router]);
 }

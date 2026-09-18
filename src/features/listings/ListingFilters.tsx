@@ -1,15 +1,11 @@
 import { Link } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { BrandColors, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { formatListingType } from '@/features/listings/format';
-import {
-  type ListingFilterState,
-  isZipCode,
-  uniqueSorted,
-} from '@/features/listings/filters';
+import { type ListingFilterState, uniqueSorted } from '@/features/listings/filters';
 import type { PublicListing } from '@/features/listings/useListings';
 
 const PRIMARY = BrandColors.amber;
@@ -43,6 +39,11 @@ function Chip({
   );
 }
 
+/**
+ * Primary browsing controls: filter by City and by Type. Search and ZIP inputs
+ * were removed in favor of city/day browsing; the underlying filter state still
+ * carries `query`/`zip` (kept empty) so results logic is unchanged.
+ */
 export function ListingFilters({
   listings,
   filters,
@@ -62,17 +63,8 @@ export function ListingFilters({
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchRow}>
-        <TextInput
-          value={filters.query}
-          onChangeText={(query) => onChange({ ...filters, query })}
-          placeholder="Search happy hours, trivia, venues…"
-          placeholderTextColor={BrandColors.muted}
-          autoCorrect={false}
-          returnKeyType="search"
-          style={[styles.search, { borderColor: border, color: theme.text }]}
-        />
-        {showNavigation ? (
+      {showNavigation ? (
+        <View style={styles.navRow}>
           <Link href="/week" asChild>
             <Pressable
               accessibilityRole="button"
@@ -82,8 +74,6 @@ export function ListingFilters({
               <ThemedText type="smallBold">Calendar</ThemedText>
             </Pressable>
           </Link>
-        ) : null}
-        {showNavigation ? (
           <Link href="/map" asChild>
             <Pressable
               accessibilityRole="button"
@@ -95,76 +85,66 @@ export function ListingFilters({
               </ThemedText>
             </Pressable>
           </Link>
-        ) : null}
-      </View>
-
-      <View style={styles.zipRow}>
-        <TextInput
-          value={filters.zip}
-          onChangeText={(zip) => onChange({ ...filters, zip })}
-          placeholder="ZIP code"
-          accessibilityLabel="Filter by ZIP code"
-          placeholderTextColor={BrandColors.muted}
-          keyboardType="numbers-and-punctuation"
-          maxLength={10}
-          style={[styles.zipInput, { borderColor: border, color: theme.text, backgroundColor: theme.backgroundElement }]}
-        />
-        <ThemedText type="small" themeColor="textSecondary">
-          {filters.zip.trim() && !isZipCode(filters.zip.trim()) ? 'Enter 5 digits or ZIP+4' : 'Optional'}
-        </ThemedText>
-      </View>
-
-      {types.length > 0 ? (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.row}
-        >
-          <Chip
-            label="All types"
-            selected={filters.type === null}
-            onPress={() => onChange({ ...filters, type: null })}
-            border={border}
-          />
-          {types.map((type) => (
-            <Chip
-              key={type}
-              label={formatListingType(type)}
-              selected={filters.type === type}
-              onPress={() => onChange({ ...filters, type: filters.type === type ? null : type })}
-              border={border}
-            />
-          ))}
-        </ScrollView>
+        </View>
       ) : null}
 
       {cities.length > 0 ? (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.row}
-        >
-          <Chip
-            label="All cities"
-            selected={filters.cities.length === 0}
-            onPress={() => onChange({ ...filters, cities: [] })}
-            border={border}
-          />
-          {cities.map((city) => (
+        <View style={styles.group}>
+          <ThemedText type="smallBold">City</ThemedText>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.row}
+          >
             <Chip
-              key={city}
-              label={city}
-              selected={filters.cities.includes(city)}
-              onPress={() => onChange({
-                ...filters,
-                cities: filters.cities.includes(city)
-                  ? filters.cities.filter((selected) => selected !== city)
-                  : [...filters.cities, city],
-              })}
+              label="All cities"
+              selected={filters.cities.length === 0}
+              onPress={() => onChange({ ...filters, cities: [] })}
               border={border}
             />
-          ))}
-        </ScrollView>
+            {cities.map((city) => (
+              <Chip
+                key={city}
+                label={city}
+                selected={filters.cities.includes(city)}
+                onPress={() => onChange({
+                  ...filters,
+                  cities: filters.cities.includes(city)
+                    ? filters.cities.filter((selected) => selected !== city)
+                    : [...filters.cities, city],
+                })}
+                border={border}
+              />
+            ))}
+          </ScrollView>
+        </View>
+      ) : null}
+
+      {types.length > 0 ? (
+        <View style={styles.group}>
+          <ThemedText type="smallBold">Type</ThemedText>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.row}
+          >
+            <Chip
+              label="All types"
+              selected={filters.type === null}
+              onPress={() => onChange({ ...filters, type: null })}
+              border={border}
+            />
+            {types.map((type) => (
+              <Chip
+                key={type}
+                label={formatListingType(type)}
+                selected={filters.type === type}
+                onPress={() => onChange({ ...filters, type: filters.type === type ? null : type })}
+                border={border}
+              />
+            ))}
+          </ScrollView>
+        </View>
       ) : null}
     </View>
   );
@@ -172,24 +152,17 @@ export function ListingFilters({
 
 const styles = StyleSheet.create({
   container: {
-    gap: Spacing.two,
+    gap: Spacing.three,
     paddingBottom: Spacing.one,
   },
-  searchRow: {
+  navRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.two,
   },
-  search: {
-    flex: 1,
-    minHeight: 44,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderRadius: Spacing.two,
-    paddingHorizontal: Spacing.three,
-    backgroundColor: BrandColors.wash,
+  group: {
+    gap: Spacing.two,
   },
-  zipRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
-  zipInput: { minHeight: 44, width: 130, borderWidth: StyleSheet.hairlineWidth * 2, borderRadius: Spacing.two, paddingHorizontal: Spacing.three },
   mapButton: {
     minHeight: 44,
     minWidth: 64,

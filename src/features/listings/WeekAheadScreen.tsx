@@ -10,6 +10,7 @@ import { ListingFilters } from '@/features/listings/ListingFilters';
 import { useListingFilters } from '@/features/listings/ListingFiltersContext';
 import { WeekListingRow } from '@/features/listings/WeekListingRow';
 import { filterListings } from '@/features/listings/filters';
+import { formatWeekdayShort } from '@/features/listings/format';
 import { useListings } from '@/features/listings/useListings';
 import { type DayBucket, weekAhead } from '@/features/listings/weekAhead';
 import { PRODUCT_NAME } from '@/lib/brand';
@@ -104,7 +105,7 @@ export function WeekAheadScreen() {
               {days.map((day) => (
                 <CalendarChip
                   key={day.weekday}
-                  label={day.weekday.slice(0, 3) + ' ' + day.dayNumber}
+                  label={formatWeekdayShort(day.weekday) + ' ' + day.dayNumber}
                   accessibilityLabel={day.heading}
                   selected={effectiveDay === day.weekday}
                   onPress={() => setSelectedDay(day.weekday)}
@@ -156,7 +157,7 @@ function CalendarDay({ day, compact }: { day: DayBucket; compact: boolean }) {
           type="subtitle"
           style={compact ? styles.weekHeading : styles.dayHeading}
         >
-          {compact ? day.weekday.slice(0, 3) + ' ' + day.dayNumber : day.heading}
+          {compact ? formatWeekdayShort(day.weekday) + ' ' + day.dayNumber : day.heading}
         </ThemedText>
         {day.isToday ? <ThemedText type="smallBold">Today</ThemedText> : null}
       </View>
