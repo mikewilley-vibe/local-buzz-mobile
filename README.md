@@ -212,8 +212,8 @@ Do **not** change production (`vghnfdukyosvvoqrxmok`). Never commit API keys.
 
 ## Development build (app icon)
 
-Expo Go keeps its own home-screen icon. The Local Buzz 757 pin/bee icon appears
-on a **development or production build**.
+Expo Go keeps its own home-screen icon. The Local Buzz 757 gold pin-and-bee
+icon appears on a **development or production build**.
 
 ```bash
 npx eas-cli login

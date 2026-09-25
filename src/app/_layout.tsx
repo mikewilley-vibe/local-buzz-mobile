@@ -2,7 +2,7 @@ import { DefaultTheme, Link, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { Pressable } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { BrandColors, Colors } from '@/constants/theme';
@@ -41,7 +41,26 @@ export default function RootLayout() {
           <Stack.Screen
             name="index"
             options={{
-              title: PRODUCT_NAME,
+              headerTitle: () => (
+                <View
+                  accessible
+                  accessibilityRole="header"
+                  accessibilityLabel={PRODUCT_NAME}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 8,
+                  }}
+                >
+                  <Image
+                    source={require('../../assets/images/icon.png')}
+                    style={{ width: 28, height: 28, borderRadius: 7 }}
+                    accessible={false}
+                    accessibilityElementsHidden
+                  />
+                  <ThemedText type="smallBold">{PRODUCT_NAME}</ThemedText>
+                </View>
+              ),
               headerLeft: () => (
                 <Link href="/account" asChild>
                   <Pressable accessibilityRole="button" hitSlop={8}>
