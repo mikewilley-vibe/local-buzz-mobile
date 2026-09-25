@@ -13,9 +13,15 @@ export function formatListingType(type: string): string {
   return LISTING_TYPE_LABELS[type] ?? type;
 }
 
+/** Capitalized 3-letter weekday, e.g. "monday" → "Mon". */
+export function formatWeekdayShort(weekday: string): string {
+  if (!weekday) return '';
+  return weekday.charAt(0).toUpperCase() + weekday.slice(1, 3).toLowerCase();
+}
+
 export function formatDays(days: string[]): string {
   if (!days || days.length === 0) return '';
-  return days.map((day) => day.charAt(0).toUpperCase() + day.slice(1, 3)).join(' · ');
+  return days.map(formatWeekdayShort).join(' · ');
 }
 
 export function formatTime(value: string | null): string | null {
@@ -44,6 +50,21 @@ export function formatSchedule(listing: PublicListing): string {
 
 export function formatLocation(listing: PublicListing): string {
   return [listing.street_address, listing.city].filter(Boolean).join(', ');
+}
+
+/**
+ * A short, scannable summary of what the listing offers, for home-page cards
+ * where the street address is intentionally omitted. Falls back to the type
+ * and city when a listing has no description of its own.
+ */
+export function formatSpecialSummary(listing: PublicListing): string {
+  const description = listing.description?.trim();
+  if (description) return description;
+
+  const fallback = [formatListingType(listing.listing_type), listing.city]
+    .filter(Boolean)
+    .join(' · ');
+  return fallback || 'Tap for details';
 }
 
 /** Human-friendly "time ago" for an ISO timestamp, or null if unparseable. */

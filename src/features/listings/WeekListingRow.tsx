@@ -4,14 +4,14 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BrandColors, Spacing } from '@/constants/theme';
-import { formatListingType, formatLocation, formatTimeRange } from '@/features/listings/format';
+import { formatListingType, formatSpecialSummary, formatTimeRange } from '@/features/listings/format';
 import type { PublicListing } from '@/features/listings/useListings';
 
 /** Compact row for the week view — the day is already in the section heading. */
 export function WeekListingRow({ listing }: { listing: PublicListing }) {
   const router = useRouter();
   const time = formatTimeRange(listing);
-  const location = formatLocation(listing);
+  const summary = formatSpecialSummary(listing);
 
   return (
     <Pressable
@@ -33,11 +33,9 @@ export function WeekListingRow({ listing }: { listing: PublicListing }) {
               {time}
             </ThemedText>
           ) : null}
-          {location ? (
-            <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
-              {location}
-            </ThemedText>
-          ) : null}
+          <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
+            {summary}
+          </ThemedText>
         </View>
       </ThemedView>
     </Pressable>

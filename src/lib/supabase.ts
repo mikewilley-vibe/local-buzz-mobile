@@ -22,5 +22,8 @@ export const supabase = createClient<Database>(supabaseUrl, supabasePublishableK
     autoRefreshToken: true,
     // Custom-scheme / Expo Go URLs are handled by `@/lib/auth-linking`.
     detectSessionInUrl: false,
+    // PKCE lets the OAuth redirect return a `code` we exchange in-app, and
+    // stores the code verifier in AsyncStorage across the browser round-trip.
+    flowType: 'pkce',
   },
 });

@@ -21,8 +21,13 @@ export default function AuthCallbackScreen() {
   useEffect(() => {
     let cancelled = false;
     void (async () => {
-      if (url) await createSessionFromUrl(url);
-      if (!cancelled) router.replace('/account');
+      const result = url ? await createSessionFromUrl(url) : null;
+      if (cancelled) return;
+      if (result?.status === 'error') {
+        router.replace({ pathname: '/account', params: { authError: result.message } });
+      } else {
+        router.replace('/account');
+      }
     })();
     return () => {
       cancelled = true;

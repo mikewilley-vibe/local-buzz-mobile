@@ -36,30 +36,26 @@ export const BrandColors = {
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
+/**
+ * Bundled brand fonts, matching the public website:
+ *   - display  → Fraunces (the serif used for every heading)
+ *   - body     → Outfit (the sans used for body copy and UI)
+ * The family strings are the keys registered in `useFonts` (see app/_layout).
+ * Weight is baked into the family name, so set `fontFamily` — not `fontWeight`.
+ */
+export const Fonts = {
+  display: {
+    semibold: 'Fraunces_600SemiBold',
+    bold: 'Fraunces_700Bold',
   },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
+  body: {
+    regular: 'Outfit_400Regular',
+    medium: 'Outfit_500Medium',
+    semibold: 'Outfit_600SemiBold',
+    bold: 'Outfit_700Bold',
   },
-  web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
-  },
-});
+  mono: Platform.select({ ios: 'ui-monospace', web: 'var(--font-mono)', default: 'monospace' }) as string,
+} as const;
 
 export const Spacing = {
   half: 2,

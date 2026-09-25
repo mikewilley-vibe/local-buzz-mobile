@@ -10,8 +10,10 @@ import { ListingFilters } from '@/features/listings/ListingFilters';
 import { useListingFilters } from '@/features/listings/ListingFiltersContext';
 import { WeekListingRow } from '@/features/listings/WeekListingRow';
 import { filterListings } from '@/features/listings/filters';
+import { formatWeekdayShort } from '@/features/listings/format';
 import { useListings } from '@/features/listings/useListings';
 import { type DayBucket, weekAhead } from '@/features/listings/weekAhead';
+import { PRODUCT_NAME } from '@/lib/brand';
 
 type CalendarView = 'agenda' | 'week';
 
@@ -66,9 +68,11 @@ export function WeekAheadScreen() {
           refreshControl={<RefreshControl refreshing={false} onRefresh={() => void reload()} />}
         >
           <View style={styles.intro}>
-            <ThemedText type="subtitle" style={styles.title}>What’s going on this week?</ThemedText>
+            <ThemedText type="eyebrow">{PRODUCT_NAME} · Hampton Roads</ThemedText>
+            <ThemedText type="display" style={styles.title}>What’s going on this week?</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              Happy hours, trivia, and local happenings around Hampton Roads.
+              Local events, specials, and good times. Happy hours, trivia, bingo, and live music
+              around Norfolk, Virginia Beach, and the rest of Hampton Roads.
             </ThemedText>
             <View style={styles.actionRow}>
               <Link href="/listings" asChild>
@@ -84,12 +88,14 @@ export function WeekAheadScreen() {
             </View>
           </View>
 
-          <ListingFilters
-            listings={state.listings}
-            filters={filters}
-            onChange={setFilters}
-            showNavigation={false}
-          />
+          <ThemedView type="backgroundElement" style={styles.filterCard}>
+            <ListingFilters
+              listings={state.listings}
+              filters={filters}
+              onChange={setFilters}
+              showNavigation={false}
+            />
+          </ThemedView>
 
           <View style={styles.toolbarSection}>
             <ThemedText type="smallBold">Day</ThemedText>
@@ -99,7 +105,7 @@ export function WeekAheadScreen() {
               {days.map((day) => (
                 <CalendarChip
                   key={day.weekday}
-                  label={day.weekday.slice(0, 3) + ' ' + day.dayNumber}
+                  label={formatWeekdayShort(day.weekday) + ' ' + day.dayNumber}
                   accessibilityLabel={day.heading}
                   selected={effectiveDay === day.weekday}
                   onPress={() => setSelectedDay(day.weekday)}
@@ -147,8 +153,11 @@ function CalendarDay({ day, compact }: { day: DayBucket; compact: boolean }) {
   return (
     <ThemedView type="backgroundElement" style={[styles.dayCard, compact && styles.weekColumn]}>
       <View style={[styles.dayHeader, compact && styles.weekHeader, day.isToday && styles.todayHeader]}>
-        <ThemedText type="smallBold" style={compact ? styles.centerText : styles.dayHeading}>
-          {compact ? day.weekday.slice(0, 3) + ' ' + day.dayNumber : day.heading}
+        <ThemedText
+          type="subtitle"
+          style={compact ? styles.weekHeading : styles.dayHeading}
+        >
+          {compact ? formatWeekdayShort(day.weekday) + ' ' + day.dayNumber : day.heading}
         </ThemedText>
         {day.isToday ? <ThemedText type="smallBold">Today</ThemedText> : null}
       </View>
@@ -192,8 +201,14 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   content: { padding: Spacing.three, gap: Spacing.four, paddingBottom: Spacing.six },
   intro: { gap: Spacing.two },
-  title: { fontSize: 30, lineHeight: 36 },
-  actionRow: { flexDirection: 'row', gap: Spacing.two, marginTop: Spacing.one },
+  title: { marginTop: Spacing.half },
+  filterCard: {
+    borderWidth: 1,
+    borderColor: BrandColors.line,
+    borderRadius: Spacing.three,
+    padding: Spacing.three,
+  },
+  actionRow: { flexDirection: 'row', gap: Spacing.two, marginTop: Spacing.two },
   primaryButton: { minHeight: 44, justifyContent: 'center', alignItems: 'center', borderRadius: 999, paddingHorizontal: Spacing.three, backgroundColor: BrandColors.amber },
   secondaryButton: { minHeight: 44, justifyContent: 'center', alignItems: 'center', borderRadius: 999, paddingHorizontal: Spacing.three, borderWidth: 1, borderColor: BrandColors.line },
   toolbarSection: { gap: Spacing.two },
@@ -206,6 +221,7 @@ const styles = StyleSheet.create({
   dayHeader: { minHeight: 52, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: Spacing.three, borderBottomWidth: 1, borderBottomColor: BrandColors.line },
   todayHeader: { backgroundColor: BrandColors.amber },
   dayHeading: { fontSize: 19, lineHeight: 25 },
+  weekHeading: { fontSize: 16, lineHeight: 20, textAlign: 'center' },
   dayListings: { padding: Spacing.two, gap: Spacing.two },
   weekGrid: { gap: Spacing.two },
   weekColumn: { width: 168, minHeight: 260 },

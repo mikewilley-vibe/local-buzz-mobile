@@ -7,7 +7,6 @@ import { Spacing } from '@/constants/theme';
 import {
   formatFreshness,
   formatListingType,
-  formatLocation,
   formatSchedule,
 } from '@/features/listings/format';
 import type { PublicListing } from '@/features/listings/useListings';
@@ -15,7 +14,7 @@ import type { PublicListing } from '@/features/listings/useListings';
 export function ListingCard({ listing }: { listing: PublicListing }) {
   const router = useRouter();
   const schedule = formatSchedule(listing);
-  const location = formatLocation(listing);
+  const location = listing.city ?? '';
   const freshness = formatFreshness(listing);
 
   return (

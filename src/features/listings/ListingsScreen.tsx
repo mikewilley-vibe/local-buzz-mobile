@@ -97,11 +97,13 @@ export function ListingsScreen() {
           contentContainerStyle={styles.listContent}
           keyboardShouldPersistTaps="handled"
           ListHeaderComponent={
-            <ListingFilters
-              listings={state.listings}
-              filters={filters}
-              onChange={setFilters}
-            />
+            <ThemedView type="backgroundElement" style={styles.filterCard}>
+              <ListingFilters
+                listings={state.listings}
+                filters={filters}
+                onChange={setFilters}
+              />
+            </ThemedView>
           }
           ListEmptyComponent={
             <View style={styles.noResults}>
@@ -160,6 +162,13 @@ const styles = StyleSheet.create({
   listContent: {
     padding: Spacing.three,
     gap: Spacing.three,
+  },
+  filterCard: {
+    borderWidth: 1,
+    borderColor: BrandColors.line,
+    borderRadius: Spacing.three,
+    padding: Spacing.three,
+    marginBottom: Spacing.one,
   },
   noResults: {
     alignItems: 'center',

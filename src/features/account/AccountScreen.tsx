@@ -2,10 +2,13 @@ import { type ReactNode, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useLocalSearchParams } from 'expo-router';
+
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BrandColors, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { OAUTH_PROVIDERS } from '@/features/account/oauthProviders';
 import { useAccount } from '@/features/account/useAccount';
 
 const PRIMARY = BrandColors.amber;
@@ -14,11 +17,17 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export function AccountScreen() {
   const theme = useTheme();
   const border = theme.backgroundSelected;
-  const { account, flow, sendCode, verifyCode, signOut, resetFlow } = useAccount();
+  const { account, flow, sendCode, verifyCode, signInWithProvider, signOut, resetFlow } =
+    useAccount();
 
+  // Errors handed back from an email/OAuth deep link (expired or invalid links,
+  // failed sign-in) arrive as a route param; seed the error so the user can retry.
+  const { authError } = useLocalSearchParams<{ authError?: string }>();
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
-  const [localError, setLocalError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(
+    authError ? String(authError) : null,
+  );
 
   if (account.status === 'loading') {
     return (
@@ -55,7 +64,8 @@ export function AccountScreen() {
 
   // account.status === 'anonymous'
   const codeSent = flow.status === 'sent' || flow.status === 'verifying';
-  const busy = flow.status === 'sending' || flow.status === 'verifying';
+  const pendingProvider = flow.status === 'oauth' ? flow.provider : null;
+  const busy = flow.status === 'sending' || flow.status === 'verifying' || flow.status === 'oauth';
   const flowError = flow.status === 'error' ? flow.message : null;
 
   function handleSend() {
@@ -82,10 +92,29 @@ export function AccountScreen() {
       <SafeAreaView edges={['left', 'right', 'bottom']} style={[styles.flex, styles.content]}>
         <ThemedText type="subtitle">Save your account</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Add your email so your confirmations and submissions are kept and follow you to a new
-          phone. We’ll send a 6-digit code — no password needed. If the email includes a link, you
-          can tap it to finish in the app.
+          Keep your confirmations and submissions so they follow you to a new phone.
         </ThemedText>
+
+        {!codeSent && OAUTH_PROVIDERS.length > 0 ? (
+          <>
+            {OAUTH_PROVIDERS.map(({ provider, label }) => (
+              <ProviderButton
+                key={provider}
+                label={label}
+                busy={pendingProvider === provider}
+                disabled={busy && pendingProvider !== provider}
+                border={border}
+                onPress={() => {
+                  setLocalError(null);
+                  void signInWithProvider(provider);
+                }}
+              />
+            ))}
+            <ThemedText type="small" themeColor="textSecondary" style={styles.dividerText}>
+              or continue with email
+            </ThemedText>
+          </>
+        ) : null}
 
         {!codeSent ? (
           <>
@@ -167,6 +196,32 @@ function PrimaryButton({
   );
 }
 
+function ProviderButton({
+  label,
+  busy,
+  disabled,
+  border,
+  onPress,
+}: {
+  label: string;
+  busy: boolean;
+  disabled: boolean;
+  border: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      disabled={busy || disabled}
+      onPress={onPress}
+      style={[styles.outlineButton, { borderColor: border }, (busy || disabled) && styles.buttonDisabled]}
+    >
+      {busy ? <ActivityIndicator /> : <ThemedText type="smallBold">{label}</ThemedText>}
+    </Pressable>
+  );
+}
+
 function Centered({ children }: { children: ReactNode }) {
   return (
     <ThemedView style={styles.flex}>
@@ -205,6 +260,10 @@ const styles = StyleSheet.create({
   },
   primaryLabel: { color: BrandColors.ink },
   buttonDisabled: { opacity: 0.5 },
+  dividerText: {
+    textAlign: 'center',
+    marginVertical: Spacing.one,
+  },
   outlineButton: {
     minHeight: 48,
     alignItems: 'center',

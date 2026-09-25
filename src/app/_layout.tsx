@@ -1,3 +1,11 @@
+import { Fraunces_600SemiBold, Fraunces_700Bold } from '@expo-google-fonts/fraunces';
+import {
+  Outfit_400Regular,
+  Outfit_500Medium,
+  Outfit_600SemiBold,
+  Outfit_700Bold,
+} from '@expo-google-fonts/outfit';
+import { useFonts } from 'expo-font';
 import { DefaultTheme, Link, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -5,7 +13,7 @@ import { useEffect } from 'react';
 import { Image, Pressable, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { BrandColors, Colors } from '@/constants/theme';
+import { BrandColors, Colors, Fonts } from '@/constants/theme';
 import { ListingFiltersProvider } from '@/features/listings/ListingFiltersContext';
 import { useAuthLinking } from '@/hooks/use-auth-linking';
 import { PRODUCT_NAME } from '@/lib/brand';
@@ -29,15 +37,39 @@ const localBuzzTheme = {
 export default function RootLayout() {
   useAuthLinking();
 
+  const [fontsLoaded] = useFonts({
+    Fraunces_600SemiBold,
+    Fraunces_700Bold,
+    Outfit_400Regular,
+    Outfit_500Medium,
+    Outfit_600SemiBold,
+    Outfit_700Bold,
+  });
+
   useEffect(() => {
-    void SplashScreen.hideAsync();
     void runDevConnectionCheck();
   }, []);
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      void SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <ThemeProvider value={localBuzzTheme}>
       <ListingFiltersProvider>
-        <Stack>
+        <Stack
+          screenOptions={{
+            headerStyle: { backgroundColor: Colors.light.backgroundElement },
+            headerTintColor: BrandColors.amberDeep,
+            headerTitleStyle: { fontFamily: Fonts.display.semibold, color: Colors.light.text },
+          }}
+        >
           <Stack.Screen
             name="index"
             options={{

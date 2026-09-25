@@ -1,7 +1,9 @@
+import type { Provider } from '@supabase/supabase-js';
 import { useCallback, useEffect, useState } from 'react';
 
 import { ensureAnonymousUser } from '@/lib/auth';
 import { getAuthRedirectTo } from '@/lib/auth-linking';
+import { signInWithProvider as runProviderSignIn } from '@/lib/oauth';
 import { supabase } from '@/lib/supabase';
 
 export type Account =
@@ -14,9 +16,19 @@ export type Flow =
   | { status: 'sending' }
   | { status: 'sent'; email: string }
   | { status: 'verifying'; email: string }
+  | { status: 'oauth'; provider: Provider }
   | { status: 'error'; email?: string; message: string };
 
 const GENERIC_ERROR = 'Something went wrong. Please try again.';
+
+/** Turn common OAuth failures into copy a user can act on. */
+function friendlyProviderError(message: string): string {
+  const normalized = message.toLowerCase();
+  if (normalized.includes('not enabled') || normalized.includes('unsupported provider')) {
+    return 'That sign-in option isn’t available yet. Try email or another provider.';
+  }
+  return message || GENERIC_ERROR;
+}
 
 async function readAccount(): Promise<Account> {
   const {
@@ -93,6 +105,32 @@ export function useAccount() {
     [refresh],
   );
 
+  /**
+   * Social sign-in (Google / Apple / Microsoft). Opens an in-app browser and
+   * returns to the app automatically; the session is then established and the
+   * auth-state subscription refreshes the account to `permanent`.
+   */
+  const signInWithProvider = useCallback(
+    async (provider: Provider) => {
+      setFlow({ status: 'oauth', provider });
+
+      const result = await runProviderSignIn(provider);
+
+      if (result.status === 'cancel') {
+        setFlow({ status: 'idle' });
+        return;
+      }
+      if (result.status === 'error') {
+        setFlow({ status: 'error', message: friendlyProviderError(result.message) });
+        return;
+      }
+
+      setFlow({ status: 'idle' });
+      await refresh();
+    },
+    [refresh],
+  );
+
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
     setFlow({ status: 'idle' });
@@ -101,5 +139,13 @@ export function useAccount() {
 
   const resetFlow = useCallback(() => setFlow({ status: 'idle' }), []);
 
-  return { account, flow, sendCode, verifyCode, signOut, resetFlow } as const;
+  return {
+    account,
+    flow,
+    sendCode,
+    verifyCode,
+    signInWithProvider,
+    signOut,
+    resetFlow,
+  } as const;
 }
