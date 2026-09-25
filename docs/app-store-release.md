@@ -7,8 +7,9 @@ Last audited: 2026-09-18
 - Customer-facing product name is **Local Buzz 757**.
 - Draft PR #2 (`cursor/rebrand-hapshere`) rebranded to HapsHere and is
   superseded. Do not merge it.
-- The existing Local Buzz pin/bee icon remains; the splash now uses the site's
-  amber color. The home screen now opens on the weekly calendar.
+- The approved Local Buzz 757 gold pin-and-bee icon is installed for the
+  home screen, splash, and in-app header. The splash uses the icon’s black
+  field. The home screen now opens on the weekly calendar.
 - App Store Connect app id `6810269202` is wired in `eas.json` for iOS submit.
 - Production EAS builds auto-increment the iOS build number
   (`cli.appVersionSource: remote`).
@@ -125,7 +126,7 @@ any action that does not show a clear success or error state.
 
 Run this against the TestFlight build before App Review:
 
-- Fresh install shows the Local Buzz 757 name, existing pin/bee icon, splash,
+- Fresh install shows the Local Buzz 757 name, gold pin-and-bee icon, splash,
   and header.
 - No screen displays “HapsHere” or a bare “Local Buzz” (without 757) to
   customers.
