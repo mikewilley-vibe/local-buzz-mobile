@@ -12,7 +12,7 @@ const WEEKDAY_KEYS = [
 
 export type DayBucket = {
   weekday: (typeof WEEKDAY_KEYS)[number];
-  /** 0 = Monday of the current Eastern week */
+  /** 0 = today in Eastern time */
   offset: number;
   heading: string;
   dayNumber: number;
@@ -49,14 +49,13 @@ function listingRunsOn(listing: PublicListing, weekday: string): boolean {
   return (listing.days ?? []).some((day) => day.toLowerCase() === weekday);
 }
 
-/** Current Monday–Sunday week in Eastern time, matching the public calendar. */
+/** Today plus the next six days in Eastern time. Never includes past days. */
 export function weekAhead(listings: PublicListing[], from: Date = new Date()): DayBucket[] {
   const today = easternDateParts(from);
   const todayUtc = Date.UTC(today.year, today.month - 1, today.day);
-  const mondayOffset = (new Date(todayUtc).getUTCDay() + 6) % 7;
 
   return Array.from({ length: 7 }, (_, offset) => {
-    const date = new Date(todayUtc + (offset - mondayOffset) * 86_400_000);
+    const date = new Date(todayUtc + offset * 86_400_000);
     const weekday = WEEKDAY_KEYS[date.getUTCDay()];
     const dayListings = listings
       .filter((listing) => listingRunsOn(listing, weekday))
